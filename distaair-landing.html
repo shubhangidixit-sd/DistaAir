@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DistaAir — Finally. An Airline That Gets It.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron: #FF6B00;
+    --deep-navy: #0A0F2C;
+    --sky: #E8F4FD;
+    --cream: #FFF8F0;
+    --gold: #F5C842;
+    --white: #FFFFFF;
+    --text-dark: #0A0F2C;
+    --text-mid: #3D4462;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(255,248,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1.5px solid rgba(255,107,0,0.12);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--saffron);
+    letter-spacing: -0.02em;
+  }
+
+  .logo span { color: var(--deep-navy); }
+
+  .nav-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    border: 1.5px solid rgba(10,15,44,0.2);
+    padding: 6px 14px;
+    border-radius: 100px;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+    background: var(--deep-navy);
+  }
+
+  .hero-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,107,0,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,107,0,0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(255,107,0,0.18) 0%, transparent 65%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-plane {
+    font-size: 5rem;
+    animation: fly-in 1.2s cubic-bezier(0.22,1,0.36,1) both;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes fly-in {
+    from { opacity: 0; transform: translateX(-120px) translateY(30px) rotate(-15deg); }
+    to   { opacity: 1; transform: translateX(0) translateY(0) rotate(0deg); }
+  }
+
+  .hero-eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    font-weight: 500;
+    margin-bottom: 20px;
+    animation: fade-up 0.8s 0.3s both;
+    position: relative; z-index: 2;
+  }
+
+  .hero-headline {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    margin-bottom: 16px;
+    animation: fade-up 0.8s 0.45s both;
+    position: relative; z-index: 2;
+  }
+
+  .hero-headline .accent { color: var(--saffron); }
+
+  .hero-sub {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+    animation: fade-up 0.8s 0.6s both;
+    position: relative; z-index: 2;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fade-up 0.8s 0.75s both;
+    position: relative; z-index: 2;
+  }
+
+  .btn-primary {
+    background: var(--saffron);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 16px 36px;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 24px rgba(255,107,0,0.4);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(255,107,0,0.5);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    padding: 16px 36px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-ghost:hover {
+    border-color: rgba(255,255,255,0.5);
+    color: var(--white);
+  }
+
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 2;
+    animation: fade-up 1s 1.2s both;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(255,107,0,0.6), transparent);
+    animation: scroll-pulse 2s infinite;
+  }
+
+  @keyframes scroll-pulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.4; transform: scaleY(0.6); }
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* TICKER */
+  .ticker {
+    background: var(--saffron);
+    overflow: hidden;
+    padding: 14px 0;
+    white-space: nowrap;
+  }
+
+  .ticker-inner {
+    display: inline-flex;
+    gap: 0;
+    animation: ticker-scroll 22s linear infinite;
+  }
+
+  .ticker-item {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--white);
+    padding: 0 40px;
+  }
+
+  .ticker-item::after {
+    content: '✈';
+    margin-left: 40px;
+  }
+
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 100px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+  }
+
+  .section-sub {
+    font-size: 1.1rem;
+    color: var(--text-mid);
+    font-weight: 300;
+    line-height: 1.7;
+    max-width: 580px;
+  }
+
+  /* FEATURE CARDS */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .feature-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 36px 32px;
+    border: 1.5px solid rgba(10,15,44,0.07);
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--saffron);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(10,15,44,0.1);
+  }
+
+  .feature-card:hover::before { transform: scaleX(1); }
+
+  .feature-emoji {
+    font-size: 2.4rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .feature-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .feature-desc {
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  .feature-tag {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    background: rgba(255,107,0,0.08);
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  /* BAGGAGE HERO SECTION */
+  .baggage-section {
+    background: var(--deep-navy);
+    border-radius: 32px;
+    padding: 80px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .baggage-section .section-title { color: var(--white); }
+  .baggage-section .section-sub { color: rgba(255,255,255,0.55); margin: 0 auto; }
+
+  .baggage-numbers {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    margin: 48px 0;
+    flex-wrap: wrap;
+  }
+
+  .bag-num {
+    text-align: center;
+    padding: 0 48px;
+  }
+
+  .bag-num-value {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(4rem, 10vw, 7rem);
+    font-weight: 800;
+    color: var(--saffron);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .bag-num-label {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+  }
+
+  .bag-plus {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    color: rgba(255,255,255,0.2);
+    font-weight: 700;
+  }
+
+  .baggage-fine-print {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.25);
+    font-style: italic;
+    margin-top: 12px;
+  }
+
+  /* MEAL SECTION */
+  .meals-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    padding: 100px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .meals-visual {
+    background: var(--gold);
+    border-radius: 24px;
+    padding: 56px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .meals-visual::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; right: -20px;
+    width: 120px; height: 120px;
+    background: rgba(255,107,0,0.2);
+    border-radius: 50%;
+  }
+
+  .meal-emoji-big {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 16px;
+    animation: wiggle 3s ease-in-out infinite;
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+
+  .meal-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--deep-navy);
+  }
+
+  /* REVEAL SECTION */
+  .reveal-section {
+    background: linear-gradient(135deg, #FFF8F0 0%, #FFE8D0 100%);
+    border-radius: 32px;
+    padding: 80px 60px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    border: 2px dashed rgba(255,107,0,0.3);
+    position: relative;
+  }
+
+  .april-badge {
+    display: inline-block;
+    background: var(--saffron);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+  }
+
+  .reveal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+  }
+
+  .reveal-sub {
+    font-size: 1.1rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto 40px;
+  }
+
+  .reveal-sub strong {
+    color: var(--saffron);
+    font-weight: 500;
+  }
+
+  /* WAITLIST FORM */
+  .waitlist-form {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .waitlist-input {
+    flex: 1;
+    min-width: 220px;
+    padding: 16px 24px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(10,15,44,0.15);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    background: var(--white);
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .waitlist-input:focus {
+    border-color: var(--saffron);
+  }
+
+  .waitlist-input::placeholder { color: rgba(10,15,44,0.35); }
+
+  /* FOOTER */
+  footer {
+    background: var(--deep-navy);
+    padding: 60px 48px 40px;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--saffron);
+    margin-bottom: 16px;
+  }
+
+  .footer-logo span { color: var(--white); }
+
+  .footer-tagline {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 40px;
+    font-weight: 300;
+    letter-spacing: 0.03em;
+  }
+
+  .footer-divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 0 0 28px;
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-copy {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.25);
+  }
+
+  .footer-april {
+    font-size: 0.78rem;
+    color: rgba(255,107,0,0.5);
+    font-style: italic;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,15,44,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--cream);
+    border-radius: 28px;
+    padding: 56px 48px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    animation: modal-pop 0.4s cubic-bezier(0.22,1,0.36,1);
+    position: relative;
+  }
+
+  @keyframes modal-pop {
+    from { opacity: 0; transform: scale(0.8) translateY(40px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-emoji { font-size: 4rem; margin-bottom: 20px; }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .modal-body {
+    font-size: 1rem;
+    color: var(--text-mid);
+    line-height: 1.65;
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  .modal-body strong { color: var(--saffron); font-weight: 500; }
+
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: rgba(10,15,44,0.3);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover { color: var(--text-dark); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .baggage-section { padding: 60px 28px; }
+    .meals-section { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px; }
+    .reveal-section { padding: 60px 28px; }
+    .bag-num { padding: 0 24px; }
+    footer { padding: 40px 24px 32px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Dista<span>Air</span></div>
+  <div class="nav-tag">Coming… Never 😈</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-plane">✈️</div>
+  <div class="hero-eyebrow">Introducing DistaAir — 1 April 2025</div>
+  <h1 class="hero-headline">
+    Finally.<br>An airline that <span class="accent">gets it.</span>
+  </h1>
+  <p class="hero-sub">Built for the global NRI community. 70 kg checked. 30 kg cabin. Elaborate Indian meals. Because you deserve better than a 7 kg limit and a sad bread roll.</p>
+  <div class="hero-cta-group">
+    <a href="#waitlist" class="btn-primary" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'}); return false;">Join the Waitlist</a>
+    <a href="#features" class="btn-ghost" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'}); return false;">See What's Different</a>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">No 7 kg limit nonsense</span>
+    <span class="ticker-item">Real Indian food. Not airline food</span>
+    <span class="ticker-item">70 kg checked baggage</span>
+    <span class="ticker-item">Overhead cabin for all your bags</span>
+    <span class="ticker-item">We saw the Instagram reels</span>
+    <span class="ticker-item">No 7 kg limit nonsense</span>
+    <span class="ticker-item">Real Indian food. Not airline food</span>
+    <span class="ticker-item">70 kg checked baggage</span>
+    <span class="ticker-item">Overhead cabin for all your bags</span>
+    <span class="ticker-item">We saw the Instagram reels</span>
+  </div>
+</div>
+
+<!-- BAGGAGE -->
+<div style="padding: 100px 24px; background: var(--cream);">
+  <div class="baggage-section">
+    <p class="section-eyebrow" style="color: rgba(255,107,0,0.8);">Baggage Policy</p>
+    <h2 class="section-title">We did the math.</h2>
+    <p class="section-sub">Every Indian leaving India carries at least 3 bags. We didn't fight it. We just… designed for it.</p>
+    <div class="baggage-numbers">
+      <div class="bag-num">
+        <div class="bag-num-value">70</div>
+        <div class="bag-num-label">kg checked baggage</div>
+      </div>
+      <div class="bag-plus">+</div>
+      <div class="bag-num">
+        <div class="bag-num-value">30</div>
+        <div class="bag-num-label">kg cabin baggage</div>
+      </div>
+      <div class="bag-plus">=</div>
+      <div class="bag-num">
+        <div class="bag-num-value">😮‍💨</div>
+        <div class="bag-num-label">finally. relief.</div>
+      </div>
+    </div>
+    <p class="baggage-fine-print">*includes your mum's pickle jars, achaar, and the atta she packed "just in case"</p>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <p class="section-eyebrow">Why DistaAir</p>
+  <h2 class="section-title">Other airlines said no.<br>We said why not.</h2>
+  <p class="section-sub">Every feature was designed by asking one question: what does an NRI actually need?</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-emoji">🧳</span>
+      <div class="feature-title">Extraaaaaaa Overhead Space</div>
+      <p class="feature-desc">The full stretch of the overhead cabin is yours. No fighting a business class uncle for space. It's your cabin bag's new home.</p>
+      <span class="feature-tag">No more fights at boarding</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-emoji">🛩️</span>
+      <div class="feature-title">Top-of-the-Line Aircraft</div>
+      <p class="feature-desc">Airbus A350. Because if you are travelling that far, at least the plane should be comfortable. And safe. Very safe.</p>
+      <span class="feature-tag">A350 fleet</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-emoji">🍛</span>
+      <div class="feature-title">Elaborate Indian Meals</div>
+      <p class="feature-desc">We know you have Bhujia in your bag. We will serve you a full Indian meal anyway. Both can coexist. This is a judgement-free cabin.</p>
+      <span class="feature-tag">Actual food, not a sandwich</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-emoji">🌍</span>
+      <div class="feature-title">Everywhere NRIs Are</div>
+      <p class="feature-desc">USA. UK. Canada. UAE. Singapore. Australia. Wherever the diaspora went, DistaAir follows. Eventually. Maybe.</p>
+      <span class="feature-tag">Global NRI routes</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-emoji">📦</span>
+      <div class="feature-title">Cargo For Your Mum's Gifts</div>
+      <p class="feature-desc">She packed 12 kg of sweets, 4 bottles of oil, and a pressure cooker. We built a special cargo bay just for that.</p>
+      <span class="feature-tag">Dedicated mum cargo</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-emoji">🎵</span>
+      <div class="feature-title">Hindi Film Screenings</div>
+      <p class="feature-desc">The full in-flight entertainment library. Every Shah Rukh film. Every Rajinikanth film. We don't discriminate by language.</p>
+      <span class="feature-tag">3000+ Indian titles</span>
+    </div>
+  </div>
+</section>
+
+<!-- MEALS -->
+<div class="meals-section">
+  <div class="meals-visual">
+    <span class="meal-emoji-big">🥘</span>
+    <div class="meal-label">Dal Makhani at 35,000 ft.<br>Because why not.</div>
+  </div>
+  <div>
+    <p class="section-eyebrow">In-flight Dining</p>
+    <h2 class="section-title">Not a sad bread roll. An actual meal.</h2>
+    <p class="section-sub">We know you packed Bhujia in your carry-on. We respect that. But DistaAir will also serve you a proper Indian thali — dal, sabzi, rice, roti. The works. At 35,000 feet.</p>
+    <p class="section-sub" style="margin-top: 20px;">No more choosing between a cheese sandwich and a cheese sandwich.</p>
+    <a href="#waitlist" class="btn-primary" style="margin-top: 36px; display: inline-block;" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'}); return false;">I Want In</a>
+  </div>
+</div>
+
+<!-- APRIL FOOL REVEAL + WAITLIST -->
+<div id="waitlist" style="padding: 0 24px 100px;">
+  <div class="reveal-section">
+    <div class="april-badge">🎉 April Fools — But Also…</div>
+    <h2 class="reveal-title">DistaAir isn't real.<br>Dista very much is.</h2>
+    <p class="reveal-sub">We don't fly planes. But we do ship authentic Indian products to <strong>30+ countries worldwide</strong> — with the same obsession over what NRIs actually need. Real Ayurveda. Real snacks. Real prices. Direct from India.</p>
+    <div class="waitlist-form">
+      <input type="email" class="waitlist-input" placeholder="your@email.com" id="email-input">
+      <button class="btn-primary" onclick="handleWaitlist()">Shop Dista →</button>
+    </div>
+    <p style="font-size: 0.78rem; color: rgba(10,15,44,0.3); margin-top: 16px;">No spam. Just India in a box, shipped to you.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Dista<span>Air</span></div>
+  <p class="footer-tagline">A very real fake airline, by a very real Indian products brand.</p>
+  <hr class="footer-divider">
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Dista. All rights reserved. DistaAir is not a real airline.</p>
+    <p class="footer-april">Happy April Fools. Now go shop real India. 🇮🇳</p>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('active')">✕</button>
+    <div class="modal-emoji">🎉</div>
+    <h3 class="modal-title">You're on the list!<br>(Kind of.)</h3>
+    <p class="modal-body">DistaAir isn't real — but the <strong>real Dista</strong> is. Authentic Indian products. 30+ countries. No middlemen. <br><br>We'll drop you a proper welcome email with a little something from us. 🇮🇳</p>
+    <a href="https://dista.com" class="btn-primary" style="text-decoration: none;">Shop Dista Now →</a>
+  </div>
+</div>
+
+<script>
+  function handleWaitlist() {
+    const input = document.getElementById('email-input');
+    if (!input.value || !input.value.includes('@')) {
+      input.style.borderColor = '#FF4444';
+      input.placeholder = 'Enter a valid email first!';
+      setTimeout(() => {
+        input.style.borderColor = '';
+        input.placeholder = 'your@email.com';
+      }, 2000);
+      return;
+    }
+    document.getElementById('modal').classList.add('active');
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modal')) {
+      document.getElementById('modal').classList.remove('active');
+    }
+  }
+
+  // Scroll-triggered fade-in for feature cards
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feature-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(32px)';
+    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease, box-shadow 0.25s, border-color 0.25s';
+    observer.observe(card);
+  });
+</script>
+</body>
+</html>
