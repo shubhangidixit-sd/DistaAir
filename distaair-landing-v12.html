@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DistaAir — Finally. An Airline That Gets It.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brand: #808EFF;
+  --brand-dark: #5563D4;
+  --brand-light: #A8B3FF;
+  --brand-xlight: #E8EBFF;
+  --deep: #0A0D1F;
+  --cream: #F7F8FF;
+  --white: #FFFFFF;
+  --text-dark: #0A0D1F;
+  --text-mid: #3D4275;
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --dur: 1.0s;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow: hidden; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--deep);
+  overflow: hidden;
+  height: 100vh; width: 100vw;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+.cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--brand);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s var(--ease-smooth), width 0.3s var(--ease-expo), height 0.3s var(--ease-expo), background 0.3s ease, opacity 0.3s ease;
+  mix-blend-mode: normal;
+}
+.cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1.5px solid rgba(128,142,255,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s var(--ease-smooth), width 0.4s var(--ease-expo), height 0.4s var(--ease-expo), border-color 0.3s ease, opacity 0.3s ease;
+}
+body.cursor-hover .cursor { width: 16px; height: 16px; background: var(--white); }
+body.cursor-hover .cursor-ring { width: 52px; height: 52px; border-color: rgba(128,142,255,0.8); }
+body.cursor-click .cursor { width: 8px; height: 8px; }
+body.cursor-click .cursor-ring { width: 28px; height: 28px; }
+
+/* ── PROGRESS BAR ── */
+.progress-bar {
+  position: fixed;
+  left: 0; top: 0;
+  width: 3px;
+  height: 0%;
+  background: linear-gradient(to bottom, var(--brand-light), var(--brand));
+  z-index: 300;
+  transition: height 0.5s var(--ease-expo);
+  border-radius: 0 2px 2px 0;
+}
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 24px;
+  background: var(--brand-light);
+  border-radius: 2px;
+  filter: blur(6px);
+  opacity: 0.8;
+}
+
+/* ── SCROLL CONTAINER — momentum-based, soft snap ── */
+.scroll-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y proximity;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-container::-webkit-scrollbar { display: none; }
+
+/* ── PANEL BASE ── */
+.panel {
+  height: 100vh; width: 100vw;
+  scroll-snap-align: start;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+.panel-content {
+  position: relative; z-index: 2;
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 80px 60px 60px;
+}
+
+/* ── PARALLAX LAYERS ── */
+.parallax-bg {
+  position: absolute;
+  inset: -15%;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+  transition: filter 0.6s ease;
+}
+
+/* ── REFINED ANIMATIONS ── */
+.anim {
+  opacity: 0;
+  transition:
+    opacity var(--dur) var(--ease-expo),
+    transform var(--dur) var(--ease-expo);
+}
+.anim.from-bottom  { transform: translateY(70px); }
+.anim.from-left    { transform: translateX(-70px); }
+.anim.from-right   { transform: translateX(70px); }
+.anim.from-top     { transform: translateY(-50px); }
+.anim.scale-in     { transform: scale(0.88); }
+
+.panel.in-view .anim { opacity: 1; transform: none; }
+
+/* Line-by-line stagger — generous delays */
+.anim.d1  { transition-delay: 0.05s; }
+.anim.d2  { transition-delay: 0.18s; }
+.anim.d3  { transition-delay: 0.32s; }
+.anim.d4  { transition-delay: 0.46s; }
+.anim.d5  { transition-delay: 0.60s; }
+.anim.d6  { transition-delay: 0.74s; }
+.anim.d7  { transition-delay: 0.88s; }
+
+/* Headline line-by-line split */
+.line-reveal .line {
+  display: block;
+  overflow: hidden;
+}
+.line-reveal .line-inner {
+  display: block;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.9s var(--ease-expo), transform 0.9s var(--ease-expo);
+}
+.panel.in-view .line-reveal .line-inner { opacity: 1; transform: translateY(0); }
+.panel.in-view .line-reveal .line:nth-child(1) .line-inner { transition-delay: 0.1s; }
+.panel.in-view .line-reveal .line:nth-child(2) .line-inner { transition-delay: 0.22s; }
+.panel.in-view .line-reveal .line:nth-child(3) .line-inner { transition-delay: 0.34s; }
+.panel.in-view .line-reveal .line:nth-child(4) .line-inner { transition-delay: 0.46s; }
+.panel.in-view .line-reveal .line:nth-child(5) .line-inner { transition-delay: 0.58s; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 52px;
+  background: rgba(10,13,31,0.35);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.4s ease, padding 0.4s ease;
+}
+nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
+.logo { font-size: 1.4rem; font-weight: 800; color: var(--brand); letter-spacing: -0.02em; }
+.logo span { color: var(--white); }
+.nav-tag { font-size: 0.68rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.28); border: 1px solid rgba(255,255,255,0.07); padding: 5px 12px; border-radius: 100px; }
+
+/* ── SCROLL HINT ── */
+.scroll-hint {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  z-index: 200; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.25); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+  transition: opacity 0.6s ease;
+}
+.scroll-hint.hidden { opacity: 0; pointer-events: none; }
+.scroll-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--brand); animation: scroll-bounce 1.8s ease-in-out infinite; }
+@keyframes scroll-bounce { 0%,100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(7px); opacity: 0.3; } }
+
+/* ── DOTS ── */
+.section-counter {
+  position: fixed; right: 28px; top: 50%; transform: translateY(-50%);
+  z-index: 200; display: flex; flex-direction: column; gap: 10px; align-items: center;
+}
+.counter-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.18); cursor: none;
+  transition: background 0.4s ease, transform 0.4s var(--ease-expo), height 0.4s var(--ease-expo);
+}
+.counter-dot.active { background: var(--brand); transform: scaleY(2.5); border-radius: 3px; height: 14px; width: 5px; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  background: var(--brand); color: var(--white);
+  font-family: 'Poppins', sans-serif; font-size: 0.92rem; font-weight: 600;
+  padding: 16px 38px; border-radius: 100px; border: none; cursor: none;
+  text-decoration: none; display: inline-block; position: relative;
+  transition: transform 0.3s var(--ease-expo), background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 28px rgba(128,142,255,0.3);
+}
+.btn-primary:hover { transform: translateY(-4px) scale(1.03); background: var(--brand-dark); box-shadow: 0 12px 40px rgba(128,142,255,0.4); }
+.btn-ghost {
+  background: transparent; color: rgba(255,255,255,0.65);
+  font-family: 'Poppins', sans-serif; font-size: 0.92rem; font-weight: 400;
+  padding: 16px 38px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.15);
+  cursor: none; text-decoration: none; display: inline-block;
+  transition: border-color 0.3s ease, color 0.3s ease, transform 0.3s var(--ease-expo);
+}
+.btn-ghost:hover { border-color: rgba(128,142,255,0.4); color: var(--brand-light); transform: translateY(-3px); }
+
+/* ── 1. HERO ── */
+.hero-bg {
+  position: absolute; inset: -15%;
+  background-size: cover; background-position: center 30%;
+  filter: brightness(0.42);
+  will-change: transform;
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(10,13,31,0.08) 0%,
+    rgba(10,13,31,0.35) 50%,
+    rgba(10,13,31,0.88) 82%,
+    rgba(10,13,31,1) 100%);
+}
+.hero-panel-content {
+  position: relative; z-index: 2; width: 100%; height: 100%;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+}
+.hero-center { text-align: center; max-width: 820px; padding: 0 24px; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 32px; }
+.hero-eyebrow { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 28px; }
+.hero-eyebrow-intro { font-size: 0.82rem; font-weight: 300; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.45); }
+.hero-eyebrow-logo { font-size: 3.2rem; font-weight: 900; color: var(--brand-light); letter-spacing: -0.04em; line-height: 1; }
+.hero-eyebrow-logo span { color: var(--white); }
+.hero-eyebrow-baggage { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brand-light); background: rgba(128,142,255,0.12); border: 1px solid rgba(128,142,255,0.25); padding: 6px 18px; border-radius: 100px; }
+.hero-headline { font-size: clamp(2.8rem, 6vw, 5.5rem); font-weight: 800; line-height: 1.0; letter-spacing: -0.03em; color: var(--white); margin-bottom: 22px; }
+.hero-sub { font-size: 1rem; font-weight: 300; color: rgba(255,255,255,0.55); max-width: 460px; line-height: 1.8; margin: 0 auto 38px; }
+.hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.hero-ticker { width: 100%; background: var(--brand); padding: 14px 0; overflow: hidden; white-space: nowrap; flex-shrink: 0; }
+.ticker-inner { display: inline-flex; animation: ticker-scroll 20s linear infinite; }
+.ticker-item { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); padding: 0 44px; }
+.ticker-item::after { content: '✈'; margin-left: 44px; }
+@keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── SHARED TEXT STYLES ── */
+.eyebrow-light { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brand-light); margin-bottom: 18px; display: block; }
+.eyebrow-dark { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brand); margin-bottom: 18px; display: block; }
+.title-light { font-size: clamp(2rem, 4.5vw, 3.8rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; color: var(--white); margin-bottom: 18px; }
+.title-dark { font-size: clamp(2rem, 4.5vw, 3.8rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; color: var(--text-dark); margin-bottom: 18px; }
+.sub-light { font-size: 0.98rem; color: rgba(255,255,255,0.42); font-weight: 300; line-height: 1.85; max-width: 520px; }
+.sub-dark { font-size: 0.98rem; color: var(--text-mid); font-weight: 300; line-height: 1.85; }
+
+/* ── 2. BAGGAGE ── */
+.baggage-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 800px; height: 800px; background: radial-gradient(circle, rgba(128,142,255,0.08) 0%, transparent 65%); pointer-events: none; animation: glow-pulse 5s ease-in-out infinite alternate; }
+@keyframes glow-pulse { from { opacity: 0.4; transform: translate(-50%,-50%) scale(1); } to { opacity: 0.9; transform: translate(-50%,-50%) scale(1.12); } }
+.baggage-inner { text-align: center; max-width: 960px; }
+.baggage-numbers { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; margin: 44px 0 0; }
+.bag-num { text-align: center; padding: 0 52px; }
+.bag-num-value { font-size: clamp(5rem, 12vw, 9rem); font-weight: 900; color: var(--brand-light); line-height: 1; letter-spacing: -0.05em; transition: color 0.3s ease; }
+.bag-num-value.counting { color: rgba(255,255,255,0.7); }
+.bag-num-label { font-size: 0.8rem; font-weight: 400; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; }
+.bag-plus { font-size: 4rem; color: rgba(255,255,255,0.08); font-weight: 700; }
+.baggage-fine-print { font-size: 0.7rem; color: rgba(255,255,255,0.18); font-style: italic; margin-top: 24px; }
+
+/* ── 3. CARRY-ON ── */
+.carryon-overlay { position: absolute; inset: 0; background: linear-gradient(105deg, rgba(10,13,31,0.94) 0%, rgba(10,13,31,0.65) 50%, rgba(10,13,31,0.08) 100%); }
+.carryon-content { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; max-width: 1200px; width: 100%; }
+.carryon-quote { font-size: clamp(1.8rem, 3.2vw, 2.8rem); font-weight: 800; line-height: 1.2; color: var(--white); letter-spacing: -0.02em; margin-bottom: 28px; }
+.carryon-quote em { color: var(--brand-light); font-style: normal; }
+.carryon-body { font-size: 0.98rem; color: rgba(255,255,255,0.45); font-weight: 300; line-height: 1.85; }
+
+/* ── 4. AIRCRAFT ── */
+.aircraft-card { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; max-width: 1160px; width: 100%; min-height: 540px; border-radius: 28px; overflow: hidden; border: 1px solid rgba(128,142,255,0.08); box-shadow: 0 40px 80px rgba(0,0,0,0.5); }
+.aircraft-img-col { position: relative; overflow: hidden; }
+.aircraft-img-col img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 6s var(--ease-smooth); }
+.aircraft-card:hover .aircraft-img-col img { transform: scale(1.04); }
+.aircraft-text-col { background: rgba(255,255,255,0.025); padding: 56px 52px; display: flex; flex-direction: column; justify-content: center; border-left: 1px solid rgba(128,142,255,0.06); backdrop-filter: blur(2px); }
+.tag-pill { display: inline-block; margin-bottom: 22px; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); background: rgba(128,142,255,0.1); border: 1px solid rgba(128,142,255,0.15); padding: 5px 14px; border-radius: 100px; width: fit-content; }
+.aircraft-title { font-size: clamp(1.8rem, 2.8vw, 2.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; color: var(--white); margin-bottom: 20px; }
+.aircraft-body { font-size: 0.92rem; color: rgba(255,255,255,0.4); font-weight: 300; line-height: 1.85; }
+
+/* ── 5. MEALS ── */
+.meals-content { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; max-width: 1200px; width: 100%; }
+.meals-img-col { border-radius: 24px; overflow: hidden; position: relative; aspect-ratio: 4/3; box-shadow: 0 32px 64px rgba(0,0,0,0.5); }
+.meals-img-col img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 5s var(--ease-smooth); }
+.meals-img-col:hover img { transform: scale(1.04); }
+.meals-overlay-text { position: absolute; bottom: 0; left: 0; right: 0; padding: 44px 28px 26px; background: linear-gradient(to top, rgba(10,13,31,0.95) 0%, transparent 100%); }
+.meals-overlay-text h3 { font-size: 1.25rem; font-weight: 700; color: var(--white); line-height: 1.35; letter-spacing: -0.01em; }
+.meals-title { font-size: clamp(1.7rem, 2.8vw, 2.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; color: var(--white); margin-bottom: 18px; }
+.meals-body { font-size: 0.92rem; color: rgba(255,255,255,0.42); font-weight: 300; line-height: 1.85; margin-bottom: 12px; }
+
+/* ── 6. ROUTES ── */
+.routes-inner { text-align: center; width: 100%; max-width: 1100px; }
+.routes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 48px; }
+.route-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(128,142,255,0.08); border-radius: 18px; padding: 28px 20px; transition: background 0.35s ease, transform 0.35s var(--ease-expo), border-color 0.35s ease; }
+.route-card:hover { background: rgba(128,142,255,0.07); transform: translateY(-6px); border-color: rgba(128,142,255,0.2); }
+.route-from { font-size: 0.65rem; font-weight: 500; color: rgba(255,255,255,0.25); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+.route-cities { font-size: 1.05rem; font-weight: 700; color: var(--white); letter-spacing: -0.01em; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.route-arrow { color: var(--brand-light); font-size: 0.9rem; }
+.routes-soon { margin-top: 36px; font-size: 0.78rem; font-weight: 300; color: rgba(255,255,255,0.22); letter-spacing: 0.06em; }
+
+/* ── 7. GRAND VISUAL ── */
+.grand-bg { position: absolute; inset: -15%; background-size: cover; background-position: center; will-change: transform; }
+.grand-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,13,31,0.82) 0%, rgba(10,13,31,0.35) 60%, rgba(10,13,31,0.6) 100%); }
+.grand-content { text-align: center; max-width: 740px; }
+.grand-text { font-size: clamp(2.2rem, 4.5vw, 3.8rem); font-weight: 800; line-height: 1.18; letter-spacing: -0.025em; color: var(--white); }
+.grand-text .highlight { color: var(--brand-light); }
+.grand-divider { width: 44px; height: 2px; background: linear-gradient(to right, var(--brand), var(--brand-light)); margin: 30px auto; border-radius: 2px; opacity: 0.8; }
+.grand-sub { font-size: 1rem; color: rgba(255,255,255,0.42); font-weight: 300; line-height: 1.85; }
+
+/* ── 8. APRIL FOOLS ── */
+.reveal-inner { background: var(--white); border-radius: 36px; padding: 64px 72px; text-align: center; max-width: 780px; width: 100%; border: 1.5px solid rgba(128,142,255,0.15); position: relative; overflow: hidden; box-shadow: 0 40px 80px rgba(128,142,255,0.08); }
+.confetti-wrap { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.confetti-dot { position: absolute; opacity: 0; }
+.panel.in-view .confetti-dot { animation: confetti-fall 1.4s var(--ease-expo) both; }
+@keyframes confetti-fall { 0% { opacity: 1; transform: translateY(-20px) rotate(0deg); } 100% { opacity: 0; transform: translateY(220px) rotate(720deg); } }
+.april-badge { display: inline-block; background: var(--brand); color: var(--white); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; padding: 7px 18px; border-radius: 100px; margin-bottom: 26px; }
+.reveal-title { font-size: clamp(1.8rem, 3.8vw, 3rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.025em; color: var(--text-dark); margin-bottom: 14px; }
+.reveal-tagline { font-size: 1.15rem; font-weight: 600; color: var(--text-dark); margin-bottom: 20px; line-height: 1.5; }
+.strikethrough { text-decoration: line-through; color: rgba(61,66,117,0.3); }
+.reveal-sub { font-size: 0.92rem; color: var(--text-mid); line-height: 1.8; max-width: 500px; margin: 0 auto 30px; font-weight: 300; }
+.reveal-sub strong { color: var(--brand); font-weight: 600; }
+.waitlist-form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; max-width: 460px; margin: 0 auto; }
+.waitlist-input { flex: 1; min-width: 200px; padding: 14px 22px; border-radius: 100px; border: 1.5px solid rgba(128,142,255,0.18); font-family: 'Poppins', sans-serif; font-size: 0.88rem; background: var(--cream); color: var(--text-dark); outline: none; cursor: none; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+.waitlist-input:focus { border-color: var(--brand); box-shadow: 0 0 0 4px rgba(128,142,255,0.08); }
+.waitlist-input::placeholder { color: rgba(10,13,31,0.28); }
+
+/* ── 9. MISSION + FINAL (merged) ── */
+.final-panel { background: var(--deep); }
+.final-inner { text-align: center; width: 100%; max-width: 1080px; }
+.final-headline { font-size: clamp(2rem, 4.5vw, 3.8rem); font-weight: 800; color: var(--white); letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 10px; }
+.final-sub { font-size: 1.25rem; font-weight: 600; color: var(--brand-light); margin-bottom: 16px; }
+.mission-body { font-size: 0.9rem; color: rgba(255,255,255,0.32); font-weight: 300; line-height: 1.85; max-width: 620px; margin: 0 auto 52px; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 860px; margin: 0 auto 40px; }
+.stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(128,142,255,0.09); border-radius: 22px; padding: 38px 22px; text-align: center; transition: background 0.3s ease, transform 0.4s var(--ease-expo), border-color 0.3s ease; }
+.stat-card:hover { background: rgba(128,142,255,0.07); transform: translateY(-6px); border-color: rgba(128,142,255,0.18); }
+.stat-value { font-size: 2.2rem; font-weight: 900; color: var(--brand-light); letter-spacing: -0.03em; margin-bottom: 8px; }
+.stat-label { font-size: 0.9rem; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+.stat-desc { font-size: 0.75rem; color: rgba(255,255,255,0.28); font-weight: 300; }
+.final-footer { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.footer-copy { font-size: 0.68rem; color: rgba(255,255,255,0.16); }
+.footer-april { font-size: 0.68rem; color: rgba(128,142,255,0.28); font-style: italic; }
+
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,13,31,0.88); backdrop-filter: blur(14px); z-index: 999; align-items: center; justify-content: center; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--white); border-radius: 32px; padding: 52px 44px; max-width: 440px; width: 90%; text-align: center; animation: modal-pop 0.6s var(--ease-expo); position: relative; }
+@keyframes modal-pop { from { opacity: 0; transform: scale(0.75) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.modal-emoji { font-size: 3rem; margin-bottom: 16px; display: block; animation: spin-in 0.7s var(--ease-expo) 0.1s both; }
+@keyframes spin-in { from { transform: rotate(-180deg) scale(0); } to { transform: rotate(0deg) scale(1); } }
+.modal-title { font-size: 1.6rem; font-weight: 800; color: var(--text-dark); margin-bottom: 12px; line-height: 1.1; }
+.modal-body { font-size: 0.9rem; color: var(--text-mid); line-height: 1.75; margin-bottom: 28px; font-weight: 300; }
+.modal-body strong { color: var(--brand); font-weight: 600; }
+.modal-close { position: absolute; top: 18px; right: 22px; background: none; border: none; font-size: 1.3rem; color: rgba(10,13,31,0.22); cursor: none; transition: color 0.2s ease, transform 0.3s var(--ease-expo); }
+.modal-close:hover { color: var(--text-dark); transform: rotate(90deg); }
+
+@media (max-width: 768px) {
+  /* Disable scroll snap on mobile — free native scroll feels better */
+  .scroll-container {
+    scroll-snap-type: none;
+    overflow-y: auto;
+    height: 100vh;
+  }
+  .panel {
+    height: auto;
+    min-height: 100vh;
+    scroll-snap-align: none;
+    padding-top: 0;
+  }
+
+  /* Nav */
+  nav { padding: 14px 20px; }
+
+  /* Panel content spacing */
+  .panel-content {
+    padding: 100px 22px 56px;
+    align-items: flex-start;
+  }
+
+  /* Hero */
+  .hero-panel-content { justify-content: flex-end; }
+  .hero-center { padding-bottom: 24px; }
+  .hero-eyebrow-logo { font-size: 2.2rem; }
+  .hero-headline { font-size: clamp(2.2rem, 8vw, 3rem); }
+  .hero-sub { font-size: 0.92rem; margin-bottom: 28px; }
+  .hero-ctas { flex-direction: column; align-items: center; gap: 12px; }
+  .btn-primary, .btn-ghost { width: 100%; max-width: 320px; text-align: center; }
+
+  /* Ticker */
+  .ticker-item { font-size: 0.75rem; padding: 0 28px; }
+
+  /* Baggage */
+  .baggage-inner { padding: 0 4px; }
+  .baggage-numbers { flex-direction: column; gap: 20px; }
+  .bag-num { padding: 0; }
+  .bag-plus { font-size: 2rem; transform: rotate(90deg); }
+  .bag-num-value { font-size: clamp(3.5rem, 18vw, 5.5rem); }
+  .title-light { font-size: clamp(1.8rem, 7vw, 2.8rem); }
+  .sub-light { font-size: 0.9rem; }
+
+  /* Carry-on */
+  .carryon-content { grid-template-columns: 1fr; gap: 0; }
+  .carryon-overlay { background: linear-gradient(to bottom, rgba(10,13,31,0.92) 0%, rgba(10,13,31,0.75) 60%, rgba(10,13,31,0.5) 100%); }
+  .carryon-quote { font-size: clamp(1.5rem, 6vw, 2rem); margin-bottom: 20px; }
+  .carryon-body { font-size: 0.88rem; }
+
+  /* Aircraft */
+  .aircraft-card {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    border-radius: 20px;
+  }
+  .aircraft-img-col { aspect-ratio: 16/9; }
+  .aircraft-text-col { padding: 32px 28px; border-left: none; border-top: 1px solid rgba(128,142,255,0.06); }
+  .aircraft-title { font-size: clamp(1.4rem, 5vw, 2rem); }
+
+  /* Meals */
+  .meals-content { grid-template-columns: 1fr; gap: 28px; }
+  .meals-img-col { aspect-ratio: 16/10; }
+  .meals-title { font-size: clamp(1.4rem, 5vw, 2rem); }
+  .meals-body { font-size: 0.88rem; }
+
+  /* Routes */
+  .routes-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 32px; }
+  .route-card { padding: 20px 14px; }
+  .route-cities { font-size: 0.88rem; flex-direction: column; gap: 4px; }
+  .route-arrow { transform: rotate(90deg); display: inline-block; }
+  .title-light { font-size: clamp(1.8rem, 6vw, 2.6rem); }
+
+  /* Grand visual */
+  .grand-text { font-size: clamp(1.8rem, 6vw, 2.8rem); }
+  .grand-sub { font-size: 0.9rem; }
+
+  /* Reveal */
+  .reveal-inner { padding: 40px 22px; border-radius: 24px; }
+  .reveal-title { font-size: clamp(1.5rem, 6vw, 2.2rem); }
+  .reveal-tagline { font-size: 1rem; }
+  .reveal-sub { font-size: 0.88rem; }
+  .waitlist-form { flex-direction: column; align-items: center; }
+  .waitlist-input { width: 100%; max-width: 320px; }
+  .btn-primary.waitlist-btn { width: 100%; max-width: 320px; }
+
+  /* Final */
+  .final-headline { font-size: clamp(1.8rem, 7vw, 3rem); }
+  .final-sub { font-size: 1.05rem; margin-bottom: 14px; }
+  .mission-body { font-size: 0.86rem; margin-bottom: 36px; }
+  .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+  .stat-card { padding: 28px 20px; }
+  .stat-value { font-size: 2rem; }
+  .final-footer { flex-direction: column; text-align: center; gap: 8px; }
+
+  /* Hide decorative elements */
+  .section-counter { display: none; }
+  .progress-bar { width: 2px; }
+  body { cursor: auto; }
+  .cursor, .cursor-ring { display: none; }
+}
+
+/* Extra small phones */
+@media (max-width: 390px) {
+  .hero-eyebrow-logo { font-size: 1.8rem; }
+  .hero-headline { font-size: 1.9rem; }
+  .bag-num-value { font-size: 3.2rem; }
+  .routes-grid { grid-template-columns: 1fr; }
+  .reveal-inner { padding: 32px 18px; }
+}
+
+/* ── REVEAL SPLIT LAYOUT ── */
+.reveal-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100vh;
+  width: 100%;
+}
+.reveal-img-col {
+  position: relative;
+  overflow: hidden;
+}
+.reveal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 6s var(--ease-smooth);
+}
+.reveal-img-col:hover .reveal-img { transform: scale(1.04); }
+.reveal-img-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 48px 36px 36px;
+  background: linear-gradient(to top, rgba(10,13,31,0.85) 0%, transparent 100%);
+}
+.reveal-img-caption {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+.reveal-content-col {
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 64px;
+  overflow-y: auto;
+  position: relative;
+}
+.reveal-content-col::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(to bottom, transparent, var(--brand), transparent);
+  opacity: 0.3;
+}
+
+@media (max-width: 768px) {
+  .reveal-split {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+  .reveal-img-col {
+    height: 45vh;
+  }
+  .reveal-content-col {
+    padding: 40px 24px 48px;
+  }
+  .reveal-content-col::before { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar" id="progressBar"></div>
+
+<nav id="mainNav">
+  <div class="logo">Dista<span>Air</span></div>
+  <div class="nav-tag">Coming Soon</div>
+</nav>
+
+<div class="scroll-hint" id="scrollHint">
+  <div class="scroll-dot"></div>
+  scroll
+</div>
+
+<div class="section-counter" id="sectionCounter"></div>
+
+<div class="scroll-container" id="scrollContainer">
+
+  <!-- 1. HERO -->
+  <section class="panel" id="panel-0">
+    <div class="hero-bg parallax-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-panel-content">
+      <div class="hero-center">
+        <div class="hero-eyebrow anim from-bottom d1">
+          <span class="hero-eyebrow-intro">Introducing</span>
+          <span class="hero-eyebrow-logo">Dista<span>Air</span></span>
+          <span class="hero-eyebrow-baggage">With 100 kg baggage allowance!</span>
+        </div>
+        <h1 class="hero-headline line-reveal">
+          <span class="line"><span class="line-inner">Finally, an airline</span></span>
+          <span class="line"><span class="line-inner">that gets it.</span></span>
+        </h1>
+        <p class="hero-sub anim from-bottom d4">Built for the global NRI community. 70 kg checked. 30 kg cabin. Elaborate Indian meals. Because you deserve better than a 7 kg limit and a sad bread roll.</p>
+        <div class="hero-ctas anim from-bottom d5">
+          <a href="#" class="btn-primary" onclick="scrollToPanel(7); return false;">Join the Waitlist</a>
+          <a href="#" class="btn-ghost" onclick="scrollToPanel(1); return false;">See What's Different</a>
+        </div>
+      </div>
+      <div class="hero-ticker anim from-bottom d6">
+        <div class="ticker-inner">
+          <span class="ticker-item">10 kg hand baggage</span>
+          <span class="ticker-item">Real Indian food. Not airline sandwiches</span>
+          <span class="ticker-item">70 kg checked baggage</span>
+          <span class="ticker-item">Overhead cabin for all your bags</span>
+          <span class="ticker-item">Yes, A350 aircrafts</span>
+          <span class="ticker-item">10 kg hand baggage</span>
+          <span class="ticker-item">Real Indian food. Not airline sandwiches</span>
+          <span class="ticker-item">70 kg checked baggage</span>
+          <span class="ticker-item">Overhead cabin for all your bags</span>
+          <span class="ticker-item">Yes, A350 aircrafts</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. BAGGAGE -->
+  <section class="panel" id="panel-1" style="background: var(--deep);">
+    <div class="baggage-glow"></div>
+    <div class="panel-content">
+      <div class="baggage-inner">
+        <span class="eyebrow-light anim from-top d1">Baggage Policy</span>
+        <h2 class="title-light line-reveal">
+          <span class="line"><span class="line-inner">We did the math.</span></span>
+        </h2>
+        <p class="sub-light anim from-bottom d3" style="margin: 0 auto 0;">Every Indian leaving India carries at least 3 bags. We didn't fight it. We just… designed for it.</p>
+        <div class="baggage-numbers">
+          <div class="bag-num anim from-left d3">
+            <div class="bag-num-value" id="count1">0</div>
+            <div class="bag-num-label">kg checked</div>
+          </div>
+          <div class="bag-plus anim scale-in d4">+</div>
+          <div class="bag-num anim scale-in d4">
+            <div class="bag-num-value" id="count2">0</div>
+            <div class="bag-num-label">kg cabin</div>
+          </div>
+          <div class="bag-plus anim scale-in d5">=</div>
+          <div class="bag-num anim from-right d5">
+            <div class="bag-num-value">😮‍💨</div>
+            <div class="bag-num-label">finally. relief.</div>
+          </div>
+        </div>
+        <p class="baggage-fine-print anim from-bottom d6">*Allowed: Your mum's pickles, snacks, and all the "just in case" items you packed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. CARRY-ON -->
+  <section class="panel" id="panel-2">
+    <div class="parallax-bg" id="carryonBg" style="filter: brightness(0.28);"></div>
+    <div class="carryon-overlay"></div>
+    <div class="panel-content">
+      <div class="carryon-content">
+        <div>
+          <span class="eyebrow-light anim from-top d1">Overhead Storage</span>
+          <div class="carryon-quote line-reveal">
+            <span class="line"><span class="line-inner">Every airline says</span></span>
+            <span class="line"><span class="line-inner" style="color: var(--brand-light);">"One cabin bag only."</span></span>
+            <span class="line"><span class="line-inner">Every passenger shows up</span></span>
+            <span class="line"><span class="line-inner">with at least three.</span></span>
+          </div>
+          <p class="carryon-body anim from-left d5">So we stopped fighting it. DistaAir introduces extra overhead storage — purpose-built for travellers who never pack light. Because packing light was never really an option.</p>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. AIRCRAFT -->
+  <section class="panel" id="panel-3" style="background: var(--deep);">
+    <div class="panel-content">
+      <div class="aircraft-card anim scale-in d1">
+        <div class="aircraft-img-col">
+          <img id="a350Img" src="" alt="DistaAir A350">
+        </div>
+        <div class="aircraft-text-col">
+          <span class="tag-pill anim from-right d2">A350 Fleet</span>
+          <h3 class="aircraft-title line-reveal">
+            <span class="line"><span class="line-inner">The Airbus A350.</span></span>
+            <span class="line"><span class="line-inner">Nothing less.</span></span>
+          </h3>
+          <p class="aircraft-body anim from-right d4">We fly top-of-the-line A350 aircraft. Wide-body, long-haul, built for comfort. Because if you are travelling that far — to family, to home, to a new chapter — at least the plane should be comfortable. And safe. Very safe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. MEALS -->
+  <section class="panel" id="panel-4" style="background: var(--deep);">
+    <div class="panel-content">
+      <div class="meals-content">
+        <div class="meals-img-col anim from-left d1">
+          <img id="foodImg" src="" alt="Butter Chicken meal">
+          <div class="meals-overlay-text">
+            <h3>Butter Chicken at 35,000 ft.<br>Because why not.</h3>
+          </div>
+        </div>
+        <div>
+          <span class="eyebrow-dark anim from-right d1">In-flight Dining</span>
+          <h2 class="meals-title line-reveal">
+            <span class="line"><span class="line-inner">Not a sad bread roll.</span></span>
+            <span class="line"><span class="line-inner">An actual meal.</span></span>
+          </h2>
+          <p class="meals-body anim from-right d4">We know you packed Bhujia in your carry-on. We respect that. But DistaAir will serve you a proper Indian thali — dal, sabzi, rice, roti. The works. At 35,000 feet.</p>
+          <p class="meals-body anim from-right d5">No more choosing between a cheese sandwich and a cheese sandwich.</p>
+          <a href="#" class="btn-primary anim from-right d6" style="margin-top: 22px; width: fit-content;" onclick="scrollToPanel(7); return false;">I Want In</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. ROUTES -->
+  <section class="panel" id="panel-5" style="background: var(--deep);">
+    <div class="panel-content">
+      <div class="routes-inner">
+        <span class="eyebrow-light anim from-top d1">Where We Fly</span>
+        <h2 class="title-light line-reveal">
+          <span class="line"><span class="line-inner">Connecting India</span></span>
+          <span class="line"><span class="line-inner">to the world.</span></span>
+        </h2>
+        <div class="routes-grid">
+          <div class="route-card anim from-bottom d3"><div class="route-from">Route 01</div><div class="route-cities">Hyderabad <span class="route-arrow">→</span> California</div></div>
+          <div class="route-card anim from-bottom d3"><div class="route-from">Route 02</div><div class="route-cities">Mumbai <span class="route-arrow">→</span> Dallas</div></div>
+          <div class="route-card anim from-bottom d4"><div class="route-from">Route 03</div><div class="route-cities">Bangalore <span class="route-arrow">→</span> Chicago</div></div>
+          <div class="route-card anim from-bottom d4"><div class="route-from">Route 04</div><div class="route-cities">Delhi <span class="route-arrow">→</span> New York</div></div>
+        </div>
+        <p class="routes-soon anim from-bottom d5">More routes coming soon.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. GRAND VISUAL -->
+  <section class="panel" id="panel-6">
+    <div class="grand-bg parallax-bg" id="grandBg"></div>
+    <div class="grand-overlay"></div>
+    <div class="panel-content">
+      <div class="grand-content">
+        <h2 class="grand-text line-reveal">
+          <span class="line"><span class="line-inner">Because journeys to India</span></span>
+          <span class="line"><span class="line-inner">are <span class="highlight">different.</span></span></span>
+        </h2>
+        <div class="grand-divider anim scale-in d3"></div>
+        <p class="grand-sub anim from-bottom d4">They involve long packing lists. Extra luggage.<br>And a little bit of home packed in every suitcase.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. APRIL FOOLS -->
+  <section class="panel" id="panel-7" style="background: var(--cream);">
+    <div class="confetti-wrap" id="confettiWrap"></div>
+    <div class="reveal-split">
+
+      <!-- Left: image -->
+      <div class="reveal-img-col anim from-left d1">
+        <img src="https://github.com/shubhangidixit-sd/DistaAir/raw/main/image%20(13).png" alt="NRI luggage at airport" class="reveal-img">
+        <div class="reveal-img-overlay">
+          <p class="reveal-img-caption anim from-bottom d3">Everything an NRI carries.<br>Now, we carry it for you.</p>
+        </div>
+      </div>
+
+      <!-- Right: content -->
+      <div class="reveal-content-col">
+        <div class="april-badge anim scale-in d2">🎉 April Fools — But Also…</div>
+        <h2 class="reveal-title line-reveal">
+          <span class="line"><span class="line-inner">DistaAir isn't real.</span></span>
+          <span class="line"><span class="line-inner">Dista very much is.</span></span>
+        </h2>
+        <p class="reveal-tagline anim from-right d4">Bringing India closer.<br>One <span class="strikethrough">flight</span> order at a time.</p>
+        <p class="reveal-sub anim from-right d5">We don't fly planes. But we do ship authentic Indian products to <strong>30+ countries worldwide</strong> — with the same obsession over what NRIs actually need. Real Ayurveda. Real snacks. Real prices. Direct from India.</p>
+        <div class="waitlist-form anim from-right d6">
+          <input type="email" class="waitlist-input" placeholder="your@email.com" id="email-input">
+          <button class="btn-primary" onclick="handleWaitlist()">Shop Dista →</button>
+        </div>
+        <p class="anim from-right d7" style="font-size:0.7rem;color:rgba(10,13,31,0.25);margin-top:14px;font-weight:300;">No spam. Just India in a box, shipped to you.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 9. MISSION + FINAL (merged) -->
+  <section class="panel" id="panel-8" style="background: var(--deep);">
+    <div class="panel-content">
+      <div class="final-inner">
+        <h2 class="final-headline line-reveal">
+          <span class="line"><span class="line-inner">You might not need</span></span>
+          <span class="line"><span class="line-inner">a flight to India.</span></span>
+        </h2>
+        <p class="final-sub anim from-bottom d3">Just Dista it.</p>
+        <p class="mission-body anim from-bottom d4">To bring India closer to everyone across the globe — from trusted Ayurveda to delicious Indian food — we make it easy to find authentic Indian products and deliver them wherever you are.</p>
+        <div class="stats-grid">
+          <div class="stat-card anim from-bottom d4"><div class="stat-value">500K+</div><div class="stat-label">Indian Products</div><div class="stat-desc">To choose from</div></div>
+          <div class="stat-card anim from-bottom d5"><div class="stat-value">₹0</div><div class="stat-label">Hidden Charges</div><div class="stat-desc">Customs duties & tariffs included</div></div>
+          <div class="stat-card anim from-bottom d6"><div class="stat-value">4.6/5</div><div class="stat-label">Customer Rating</div><div class="stat-desc">From 68,000+ reviews</div></div>
+        </div>
+        <div class="final-footer anim from-bottom d7">
+          <p class="footer-copy">© 2025 Dista. All rights reserved. DistaAir is not a real airline.</p>
+          <p class="footer-april">Happy April Fools. Now go shop real India. 🇮🇳</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('active')">✕</button>
+    <div class="modal-emoji">🎉</div>
+    <h3 class="modal-title">You're on the list!<br>(Kind of.)</h3>
+    <p class="modal-body">DistaAir isn't real — but the <strong>real Dista</strong> is. 30+ countries. No middlemen.<br><br>We'll drop you a welcome email. 🇮🇳</p>
+    <a href="https://dista.com" class="btn-primary" style="text-decoration:none;">Shop Dista Now →</a>
+  </div>
+</div>
+
+<script>
+  // ── Images ──
+  document.getElementById('heroBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/raw/main/hf_20260324_114345_90bcd9fd-d814-467c-ac0c-a545d7c89b4d.jpeg')";
+  document.getElementById('carryonBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/raw/main/hf_20260324_131344_47d54b32-d3e2-4d7a-bde6-01c84db551d1.jpeg')";
+  document.getElementById('grandBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/raw/main/colorful-vibrant-indian-landscape.jpg')";
+  document.getElementById('a350Img').src = "https://github.com/shubhangidixit-sd/DistaAir/raw/main/download%20(3).png";
+  document.getElementById('foodImg').src = "https://github.com/shubhangidixit-sd/DistaAir/raw/main/hf_20260324_095746_b4b73392-60b5-469e-a71c-6335995d46c623.png";
+
+  const panels = document.querySelectorAll('.panel');
+  const total = panels.length;
+  const counter = document.getElementById('sectionCounter');
+  const scrollHint = document.getElementById('scrollHint');
+  const progressBar = document.getElementById('progressBar');
+  const nav = document.getElementById('mainNav');
+  const sc = document.getElementById('scrollContainer');
+
+  // ── Build dots ──
+  panels.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'counter-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => scrollToPanel(i);
+    counter.appendChild(dot);
+  });
+
+  function scrollToPanel(i) { panels[i].scrollIntoView({ behavior: 'smooth' }); }
+
+  // ── Custom cursor ──
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let cx = 0, cy = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    cx = e.clientX; cy = e.clientY;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+  });
+
+  // Ring follows with lag
+  (function animRing() {
+    rx += (cx - rx) * 0.12;
+    ry += (cy - ry) * 0.12;
+    cursorRing.style.left = rx + 'px';
+    cursorRing.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+
+  // Hover states
+  document.querySelectorAll('a, button, .counter-dot, .route-card, .stat-card, input').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  });
+  document.addEventListener('mousedown', () => document.body.classList.add('cursor-click'));
+  document.addEventListener('mouseup', () => document.body.classList.remove('cursor-click'));
+
+  // ── Progress bar ──
+  sc.addEventListener('scroll', () => {
+    const pct = (sc.scrollTop / (sc.scrollHeight - sc.clientHeight)) * 100;
+    progressBar.style.height = pct + '%';
+    nav.classList.toggle('scrolled', sc.scrollTop > 80);
+  });
+
+  // ── Parallax on scroll ──
+  const parallaxEls = document.querySelectorAll('.parallax-bg');
+  sc.addEventListener('scroll', () => {
+    parallaxEls.forEach(el => {
+      const panel = el.closest('.panel');
+      if (!panel) return;
+      const rect = panel.getBoundingClientRect();
+      const progress = -rect.top / window.innerHeight;
+      const offset = progress * 60;
+      el.style.transform = `translateY(${offset}px)`;
+    });
+  }, { passive: true });
+
+  // ── Intersection observer ──
+  let countDone = false, confettiDone = false;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const panel = entry.target;
+        panel.classList.add('in-view');
+        const idx = Array.from(panels).indexOf(panel);
+
+        document.querySelectorAll('.counter-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+        scrollHint.classList.toggle('hidden', idx > 0);
+
+        if (idx === 1 && !countDone) {
+          countDone = true;
+          setTimeout(() => countUp(document.getElementById('count1'), 70, 1600), 350);
+          setTimeout(() => countUp(document.getElementById('count2'), 30, 1200), 700);
+        }
+        if (idx === 7 && !confettiDone) {
+          confettiDone = true;
+          setTimeout(spawnConfetti, 600);
+        }
+      }
+    });
+  }, { threshold: 0.52 });
+
+  panels.forEach(p => observer.observe(p));
+
+  // ── Elastic countup ──
+  function countUp(el, target, duration) {
+    el.classList.add('counting');
+    const start = Date.now();
+    const tick = () => {
+      const p = Math.min((Date.now() - start) / duration, 1);
+      const ease = p === 1 ? 1 : 1 - Math.pow(2, -10 * p) * Math.cos((p * 10 - 0.75) * (2 * Math.PI) / 3);
+      el.textContent = Math.round(ease * target);
+      if (p < 1) requestAnimationFrame(tick);
+      else { el.textContent = target; el.classList.remove('counting'); }
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // ── Confetti ──
+  const confettiColors = ['#808EFF','#A8B3FF','#FF808E','#FFD480','#80FFD4','#FF80C8','#ffffff'];
+  function spawnConfetti() {
+    const wrap = document.getElementById('confettiWrap');
+    wrap.innerHTML = '';
+    for (let i = 0; i < 48; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'confetti-dot';
+      dot.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*25}%;background:${confettiColors[i%confettiColors.length]};animation-delay:${Math.random()*0.7}s;animation-duration:${1+Math.random()*1.2}s;width:${4+Math.random()*10}px;height:${4+Math.random()*10}px;border-radius:${Math.random()>0.5?'50%':'3px'};`;
+      wrap.appendChild(dot);
+    }
+  }
+
+  // ── Waitlist ──
+  function handleWaitlist() {
+    const input = document.getElementById('email-input');
+    if (!input.value || !input.value.includes('@')) {
+      input.style.borderColor = '#FF6B6B';
+      input.style.boxShadow = '0 0 0 4px rgba(255,107,107,0.1)';
+      input.placeholder = 'Enter a valid email!';
+      setTimeout(() => { input.style.borderColor = ''; input.style.boxShadow = ''; input.placeholder = 'your@email.com'; }, 2200);
+      return;
+    }
+    document.getElementById('modal').classList.add('active');
+  }
+  function closeModal(e) { if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('active'); }
+
+  panels[0].classList.add('in-view');
+</script>
+</body>
+</html>
