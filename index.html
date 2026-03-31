@@ -380,15 +380,17 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   }
   .panel {
     height: auto;
-    min-height: 100svh;
+    min-height: unset;
     scroll-snap-align: none;
     padding-top: 0;
   }
+  /* Only hero stays full-screen */
+  #panel-0 { min-height: 100svh; }
   nav { padding: 14px 20px; }
 
   /* Panel content spacing */
   .panel-content {
-    padding: 80px 20px 48px;
+    padding: 70px 20px 36px;
     align-items: flex-start;
   }
 
@@ -406,12 +408,12 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 
   /* Baggage — tight vertical rhythm */
   .baggage-inner { padding: 0 4px; }
-  .baggage-numbers { flex-direction: column; gap: 12px; margin: 28px 0 0; }
+  .baggage-numbers { flex-direction: column; gap: 8px; margin: 20px 0 0; }
   .bag-num { padding: 0; }
-  .bag-plus { font-size: 2rem; transform: rotate(90deg); }
-  .bag-num-value { font-size: clamp(3.5rem, 18vw, 5.5rem); }
+  .bag-plus { font-size: 1.6rem; transform: rotate(90deg); line-height: 1; }
+  .bag-num-value { font-size: clamp(3rem, 16vw, 5rem); }
   .title-light { font-size: clamp(1.8rem, 7vw, 2.8rem); }
-  .sub-light { font-size: 0.9rem; }
+  .sub-light { font-size: 0.9rem; margin-bottom: 0; }
 
   /* Carry-on */
   .carryon-content { grid-template-columns: 1fr; gap: 0; }
@@ -464,7 +466,8 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   /* Final */
   .final-headline { font-size: clamp(1.8rem, 7vw, 3rem); }
   .final-sub { font-size: 1.05rem; margin-bottom: 14px; }
-  .mission-body { font-size: 0.86rem; margin-bottom: 36px; }
+  .mission-body { font-size: 0.86rem; margin-bottom: 28px; }
+  .mission-dista-logo { margin: 24px auto 24px; height: 64px; }
   .stats-grid { grid-template-columns: 1fr; gap: 12px; }
   .stat-card { padding: 28px 20px; }
   .stat-value { font-size: 2rem; }
@@ -543,7 +546,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   .reveal-split {
     grid-template-columns: 1fr;
     height: auto;
-    min-height: 100svh;
+    min-height: unset;
   }
   .reveal-img-col {
     height: 42vw;
@@ -554,6 +557,8 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
     padding: 32px 22px 44px;
   }
   .reveal-content-col::before { display: none; }
+  /* Grand visual needs a minimum to look good */
+  #panel-6 { min-height: 60vw; }
 }
 
 /* ── REVEAL RTBs ── */
@@ -895,7 +900,9 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 
 <script>
   // ── Images ──
-  document.getElementById('heroBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/5.jpg?raw=true')";
+  const heroBg = document.getElementById('heroBg');
+  heroBg.style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/5.jpg?raw=true')";
+  heroBg.style.backgroundPosition = window.innerWidth <= 768 ? "80% center" : "right 30%";
   document.getElementById('carryonBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/4.png?raw=true')";
   document.getElementById('grandBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/raw/main/colorful-vibrant-indian-landscape.jpg')";
   document.getElementById('a350Img').src = "https://github.com/shubhangidixit-sd/DistaAir/blob/main/1.png?raw=true";
