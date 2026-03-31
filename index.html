@@ -90,9 +90,11 @@ body.cursor-click .cursor-ring { width: 28px; height: 28px; }
 .scroll-container {
   height: 100vh;
   height: 100dvh;
-  overflow-y: scroll;
+  overflow-y: auto;
   scroll-snap-type: y proximity;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE */
 }
 .scroll-container::-webkit-scrollbar { display: none; }
 
@@ -318,7 +320,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 
 /* ── 7. GRAND VISUAL ── */
 .grand-bg { position: absolute; inset: -15%; background-size: cover; background-position: center; will-change: transform; }
-.grand-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,13,31,0.82) 0%, rgba(10,13,31,0.35) 60%, rgba(10,13,31,0.6) 100%); }
+.grand-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,13,31,0.88) 0%, rgba(10,13,31,0.45) 55%, rgba(10,13,31,0.65) 100%); }
 .grand-content { text-align: center; max-width: 740px; }
 .grand-text { font-size: clamp(2.2rem, 4.5vw, 3.8rem); font-weight: 800; line-height: 1.18; letter-spacing: -0.025em; color: var(--white); }
 .grand-text .highlight { color: var(--brand-light); }
@@ -394,13 +396,32 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
     align-items: flex-start;
   }
 
-  /* Hero */
-  .hero-panel-content { justify-content: flex-end; min-height: 100svh; }
-  .hero-center { padding-bottom: 20px; }
-  .hero-eyebrow-logo { font-size: 2.2rem; }
-  .hero-headline { font-size: clamp(2.2rem, 8vw, 3rem); }
-  .hero-sub { font-size: 0.92rem; margin-bottom: 24px; }
-  .hero-ctas { flex-direction: column; align-items: center; gap: 12px; }
+  /* Hero — premium mobile layout */
+  .hero-panel-content { justify-content: space-between; flex-direction: column; min-height: 100svh; }
+  .hero-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 100px 24px 28px;
+    text-align: center;
+  }
+  .hero-eyebrow { gap: 10px; margin-bottom: 0; }
+  .hero-eyebrow-intro { font-size: 0.72rem; letter-spacing: 0.28em; }
+  .hero-eyebrow-logo { font-size: 2.4rem; }
+  .hero-eyebrow-baggage { font-size: 0.7rem; }
+  .hero-headline {
+    font-size: clamp(2.6rem, 10vw, 3.4rem);
+    margin-bottom: 0;
+    line-height: 1.05;
+  }
+  .hero-sub {
+    font-size: 0.88rem;
+    margin-bottom: 0;
+    color: rgba(255,255,255,0.48);
+    line-height: 1.75;
+  }
+  .hero-ctas { flex-direction: column; align-items: center; gap: 10px; }
   .btn-primary, .btn-ghost { width: 100%; max-width: 320px; text-align: center; }
 
   /* Ticker */
@@ -904,7 +925,8 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   heroBg.style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/5.jpg?raw=true')";
   heroBg.style.backgroundPosition = window.innerWidth <= 768 ? "80% center" : "right 30%";
   document.getElementById('carryonBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/4.png?raw=true')";
-  document.getElementById('grandBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/raw/main/colorful-vibrant-indian-landscape.jpg')";
+  document.getElementById('grandBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/ChatGPT%20Image%20Mar%2031,%202026,%2010_20_43%20AM.png?raw=true')";
+  document.getElementById('grandBg').style.backgroundPosition = "center 30%";
   document.getElementById('a350Img').src = "https://github.com/shubhangidixit-sd/DistaAir/blob/main/1.png?raw=true";
   document.getElementById('foodImg').src = "https://github.com/shubhangidixit-sd/DistaAir/blob/main/6.png?raw=true";
 
