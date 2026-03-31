@@ -32,6 +32,11 @@ body {
   cursor: none;
 }
 
+@media (max-width: 768px) {
+  html { overflow: hidden; }
+  body { overflow: hidden; height: 100dvh; }
+}
+
 /* ── CUSTOM CURSOR ── */
 .cursor {
   position: fixed;
@@ -84,6 +89,7 @@ body.cursor-click .cursor-ring { width: 28px; height: 28px; }
 /* ── SCROLL CONTAINER — momentum-based, soft snap ── */
 .scroll-container {
   height: 100vh;
+  height: 100dvh;
   overflow-y: scroll;
   scroll-snap-type: y proximity;
   -webkit-overflow-scrolling: touch;
@@ -92,7 +98,9 @@ body.cursor-click .cursor-ring { width: 28px; height: 28px; }
 
 /* ── PANEL BASE ── */
 .panel {
-  height: 100vh; width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
   scroll-snap-align: start;
   position: relative;
   overflow: hidden;
@@ -220,7 +228,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 /* ── 1. HERO ── */
 .hero-bg {
   position: absolute; inset: -15%;
-  background-size: cover; background-position: center 30%;
+  background-size: cover; background-position: right 30%;
   filter: brightness(0.42);
   will-change: transform;
 }
@@ -368,39 +376,37 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   .scroll-container {
     scroll-snap-type: none;
     overflow-y: auto;
-    height: 100vh;
+    height: 100dvh;
   }
   .panel {
     height: auto;
-    min-height: 100vh;
+    min-height: 100svh;
     scroll-snap-align: none;
     padding-top: 0;
   }
-
-  /* Nav */
   nav { padding: 14px 20px; }
 
   /* Panel content spacing */
   .panel-content {
-    padding: 100px 22px 56px;
+    padding: 80px 20px 48px;
     align-items: flex-start;
   }
 
   /* Hero */
-  .hero-panel-content { justify-content: flex-end; }
-  .hero-center { padding-bottom: 24px; }
+  .hero-panel-content { justify-content: flex-end; min-height: 100svh; }
+  .hero-center { padding-bottom: 20px; }
   .hero-eyebrow-logo { font-size: 2.2rem; }
   .hero-headline { font-size: clamp(2.2rem, 8vw, 3rem); }
-  .hero-sub { font-size: 0.92rem; margin-bottom: 28px; }
+  .hero-sub { font-size: 0.92rem; margin-bottom: 24px; }
   .hero-ctas { flex-direction: column; align-items: center; gap: 12px; }
   .btn-primary, .btn-ghost { width: 100%; max-width: 320px; text-align: center; }
 
   /* Ticker */
   .ticker-item { font-size: 0.75rem; padding: 0 28px; }
 
-  /* Baggage */
+  /* Baggage — tight vertical rhythm */
   .baggage-inner { padding: 0 4px; }
-  .baggage-numbers { flex-direction: column; gap: 20px; }
+  .baggage-numbers { flex-direction: column; gap: 12px; margin: 28px 0 0; }
   .bag-num { padding: 0; }
   .bag-plus { font-size: 2rem; transform: rotate(90deg); }
   .bag-num-value { font-size: clamp(3.5rem, 18vw, 5.5rem); }
@@ -420,27 +426,33 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
     border-radius: 20px;
   }
   .aircraft-img-col { aspect-ratio: 16/9; }
-  .aircraft-text-col { padding: 32px 28px; border-left: none; border-top: 1px solid rgba(128,142,255,0.06); }
+  .aircraft-text-col { padding: 28px 24px 32px; border-left: none; border-top: 1px solid rgba(128,142,255,0.06); }
   .aircraft-title { font-size: clamp(1.4rem, 5vw, 2rem); }
 
   /* Meals */
-  .meals-content { grid-template-columns: 1fr; gap: 28px; }
+  .meals-content { grid-template-columns: 1fr; gap: 24px; }
   .meals-img-col { aspect-ratio: 16/10; }
   .meals-title { font-size: clamp(1.4rem, 5vw, 2rem); }
   .meals-body { font-size: 0.88rem; }
 
   /* Routes */
-  .routes-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 32px; }
-  .route-card { padding: 20px 14px; }
+  .routes-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 28px; }
+  .route-card { padding: 18px 12px; border-radius: 14px; }
   .route-cities { font-size: 0.88rem; flex-direction: column; gap: 4px; }
   .route-arrow { transform: rotate(90deg); display: inline-block; }
   .title-light { font-size: clamp(1.8rem, 6vw, 2.6rem); }
 
-  /* Grand visual */
+  /* Grand visual — tighten */
   .grand-text { font-size: clamp(1.8rem, 6vw, 2.8rem); }
   .grand-sub { font-size: 0.9rem; }
+  .grand-divider { margin: 20px auto; }
 
-  /* Reveal */
+  /* Disable parallax on mobile — prevent overflow whitespace */
+  .parallax-bg { inset: 0; transform: none !important; }
+  /* Hero bg — anchor to right to show face */
+  .hero-bg { inset: 0; background-position: 75% center; }
+
+  /* Reveal — stack vertically, tighter */
   .reveal-inner { padding: 40px 22px; border-radius: 24px; }
   .reveal-title { font-size: clamp(1.5rem, 6vw, 2.2rem); }
   .reveal-tagline { font-size: 1rem; }
@@ -531,13 +543,15 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   .reveal-split {
     grid-template-columns: 1fr;
     height: auto;
-    min-height: 100vh;
+    min-height: 100svh;
   }
   .reveal-img-col {
-    height: 45vh;
+    height: 42vw;
+    min-height: 220px;
+    max-height: 280px;
   }
   .reveal-content-col {
-    padding: 40px 24px 48px;
+    padding: 32px 22px 44px;
   }
   .reveal-content-col::before { display: none; }
 }
@@ -578,6 +592,12 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 }
 
 @media (max-width: 768px) {
+  .reveal-rtbs { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .rtb-value { font-size: 1.1rem; }
+  .rtb-label { font-size: 0.68rem; }
+  .rtb-desc { font-size: 0.62rem; }
+}
+@media (max-width: 390px) {
   .reveal-rtbs { grid-template-columns: 1fr; gap: 8px; }
 }
 
@@ -702,7 +722,8 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
           <div class="carryon-quote line-reveal">
             <span class="line"><span class="line-inner">Every airline says</span></span>
             <span class="line"><span class="line-inner" style="color: var(--brand-light);">"One cabin bag only."</span></span>
-            <span class="line"><span class="line-inner">Every passenger come with at least three. </span></span>
+            <span class="line"><span class="line-inner">Every passenger shows up</span></span>
+            <span class="line"><span class="line-inner">with at least three.</span></span>
           </div>
           <p class="carryon-body anim from-left d5">So we stopped fighting it. DistaAir introduces extra overhead storage — purpose-built for travellers who never pack light. Because packing light was never really an option.</p>
         </div>
@@ -936,6 +957,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   // ── Parallax on scroll ──
   const parallaxEls = document.querySelectorAll('.parallax-bg');
   sc.addEventListener('scroll', () => {
+    if (window.innerWidth <= 768) return; // disable on mobile
     parallaxEls.forEach(el => {
       const panel = el.closest('.panel');
       if (!panel) return;
