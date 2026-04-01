@@ -32,6 +32,11 @@ body {
   cursor: none;
 }
 
+@media (max-width: 768px) {
+  html { overflow: hidden; }
+  body { overflow: hidden; height: 100dvh; }
+}
+
 /* ── CUSTOM CURSOR ── */
 .cursor {
   position: fixed;
@@ -84,15 +89,20 @@ body.cursor-click .cursor-ring { width: 28px; height: 28px; }
 /* ── SCROLL CONTAINER — momentum-based, soft snap ── */
 .scroll-container {
   height: 100vh;
-  overflow-y: scroll;
+  height: 100dvh;
+  overflow-y: auto;
   scroll-snap-type: y proximity;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE */
 }
 .scroll-container::-webkit-scrollbar { display: none; }
 
 /* ── PANEL BASE ── */
 .panel {
-  height: 100vh; width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
   scroll-snap-align: start;
   position: relative;
   overflow: hidden;
@@ -220,7 +230,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 /* ── 1. HERO ── */
 .hero-bg {
   position: absolute; inset: -15%;
-  background-size: cover; background-position: center 30%;
+  background-size: cover; background-position: right 30%;
   filter: brightness(0.42);
   will-change: transform;
 }
@@ -310,9 +320,9 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 
 /* ── 7. GRAND VISUAL ── */
 .grand-bg { position: absolute; inset: -15%; background-size: cover; background-position: center; will-change: transform; }
-.grand-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,13,31,0.82) 0%, rgba(10,13,31,0.35) 60%, rgba(10,13,31,0.6) 100%); }
+.grand-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,13,31,0.88) 0%, rgba(10,13,31,0.45) 55%, rgba(10,13,31,0.65) 100%); }
 .grand-content { text-align: center; max-width: 740px; }
-.grand-text { font-size: clamp(1.6rem, 3.5vw, 3.2rem); font-weight: 800; line-height: 1.25; letter-spacing: -0.02em; color: var(--white); max-width: 700px; }
+.grand-text { font-size: clamp(2.2rem, 4.5vw, 3.8rem); font-weight: 800; line-height: 1.18; letter-spacing: -0.025em; color: var(--white); }
 .grand-text .highlight { color: var(--brand-light); }
 .grand-divider { width: 44px; height: 2px; background: linear-gradient(to right, var(--brand), var(--brand-light)); margin: 30px auto; border-radius: 2px; opacity: 0.8; }
 .grand-sub { font-size: 1rem; color: rgba(255,255,255,0.42); font-weight: 300; line-height: 1.85; }
@@ -363,49 +373,164 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 .modal-close { position: absolute; top: 18px; right: 22px; background: none; border: none; font-size: 1.3rem; color: rgba(10,13,31,0.22); cursor: none; transition: color 0.2s ease, transform 0.3s var(--ease-expo); }
 .modal-close:hover { color: var(--text-dark); transform: rotate(90deg); }
 
+/* ── LARGE SCREEN (1440px+) OPTIMISATION ── */
+@media (min-width: 1440px) {
+  .panel-content { padding: 100px 120px 80px; }
+
+  /* Nav */
+  nav { padding: 24px 80px; }
+  nav.scrolled { padding: 16px 80px; }
+
+  /* Hero */
+  .hero-center { max-width: 1100px; }
+  .hero-eyebrow-logo { font-size: 4rem; }
+  .hero-headline { font-size: clamp(4rem, 5.5vw, 6.5rem); margin-bottom: 28px; }
+  .hero-sub { font-size: 1.15rem; max-width: 580px; margin-bottom: 48px; }
+  .hero-eyebrow-baggage { font-size: 0.88rem; padding: 8px 22px; }
+  .ticker-item { font-size: 0.95rem; padding: 0 56px; }
+
+  /* Shared text */
+  .eyebrow-light, .eyebrow-dark, .tag-pill { font-size: 0.75rem; padding: 6px 18px; margin-bottom: 26px; }
+  .title-light, .title-dark { font-size: clamp(3rem, 3.8vw, 5rem); margin-bottom: 24px; }
+  .sub-light, .sub-dark { font-size: 1.1rem; max-width: 640px; }
+
+  /* Baggage */
+  .baggage-inner { max-width: 1200px; }
+  .bag-num-value { font-size: clamp(7rem, 11vw, 11rem); }
+  .bag-num-label { font-size: 0.95rem; }
+  .bag-plus { font-size: 5rem; }
+  .baggage-fine-print { font-size: 0.8rem; margin-top: 32px; }
+
+  /* Carry-on */
+  .carryon-content { max-width: 1400px; gap: 100px; }
+  .carryon-quote { font-size: clamp(2.4rem, 3vw, 3.6rem); }
+  .carryon-body { font-size: 1.05rem; }
+
+  /* Aircraft */
+  .aircraft-card { max-width: 1400px; min-height: 640px; border-radius: 36px; }
+  .aircraft-text-col { padding: 72px 72px; }
+  .aircraft-title { font-size: clamp(2.2rem, 2.8vw, 3.2rem); margin-bottom: 24px; }
+  .aircraft-body { font-size: 1rem; }
+
+  /* Meals */
+  .meals-content { max-width: 1400px; gap: 96px; }
+  .meals-title { font-size: clamp(2.2rem, 2.8vw, 3.2rem); margin-bottom: 24px; }
+  .meals-body { font-size: 1rem; margin-bottom: 16px; }
+  .meals-overlay-text h3 { font-size: 1.5rem; }
+
+  /* Routes */
+  .routes-inner { max-width: 1400px; }
+  .routes-grid { gap: 20px; margin-top: 60px; }
+  .route-card { padding: 36px 28px; border-radius: 24px; }
+  .route-from { font-size: 0.72rem; }
+  .route-cities { font-size: 1.2rem; }
+  .routes-soon { font-size: 0.88rem; margin-top: 44px; }
+
+  /* Grand visual */
+  .grand-content { max-width: 960px; }
+  .grand-text { font-size: clamp(3rem, 4vw, 5rem); }
+  .grand-sub { font-size: 1.15rem; }
+  .grand-divider { margin: 40px auto; }
+
+  /* Reveal split */
+  .reveal-title { font-size: clamp(2.4rem, 3.2vw, 3.8rem); }
+  .reveal-tagline { font-size: 1.3rem; margin-bottom: 24px; }
+  .reveal-sub { font-size: 1rem; max-width: 600px; margin-bottom: 36px; }
+  .reveal-content-col { padding: 80px 80px; }
+  .april-badge { font-size: 0.78rem; margin-bottom: 32px; }
+  .reveal-dista-logo { height: 44px; margin-bottom: 24px; }
+  .reveal-rtbs { gap: 16px; margin-top: 32px; }
+  .reveal-rtb { padding: 22px 20px; border-radius: 18px; }
+  .rtb-value { font-size: 1.7rem; }
+  .rtb-label { font-size: 0.85rem; }
+  .rtb-desc { font-size: 0.76rem; }
+
+  /* Coupon */
+  .coupon-inner { max-width: 900px; }
+  .coupon-pct, .coupon-off { font-size: clamp(4rem, 6vw, 7.5rem); }
+  .coupon-your { font-size: 1.1rem; margin-top: 6px; margin-bottom: 14px; }
+  .coupon-sub { font-size: 1rem; margin-bottom: 22px; }
+  .coupon-code-inner { padding: 18px 56px; gap: 10px; }
+  .coupon-code { font-size: clamp(2.4rem, 3.5vw, 3.6rem); }
+  .coupon-copy-btn { font-size: 0.85rem; padding: 10px 28px; }
+  .coupon-circle { width: 34px; height: 34px; }
+  .coupon-circle-left { left: -17px; }
+  .coupon-circle-right { right: -17px; }
+  .coupon-code-wrap { margin-bottom: 22px; border-radius: 24px; }
+  .btn-coupon { font-size: 1.05rem; padding: 16px 52px; margin-bottom: 14px; }
+  .coupon-fine-print { font-size: 0.76rem; }
+
+  /* Final / Mission */
+  .final-inner { max-width: 1300px; }
+  .final-headline { font-size: clamp(3rem, 4vw, 5rem); }
+  .mission-body { font-size: 1rem; max-width: 760px; margin-bottom: 60px; }
+  .mission-dista-logo { height: 110px; margin: 48px auto; }
+  .final-footer { padding-top: 32px; }
+  .footer-copy, .footer-april { font-size: 0.78rem; }
+}
+
 @media (max-width: 768px) {
   /* Disable scroll snap on mobile — free native scroll feels better */
   .scroll-container {
     scroll-snap-type: none;
     overflow-y: auto;
-    height: 100vh;
+    height: 100dvh;
   }
   .panel {
     height: auto;
-    min-height: 100vh;
+    min-height: unset;
     scroll-snap-align: none;
     padding-top: 0;
   }
-
-  /* Nav */
+  /* Only hero stays full-screen */
+  #panel-0 { min-height: 100svh; }
   nav { padding: 14px 20px; }
 
   /* Panel content spacing */
   .panel-content {
-    padding: 100px 22px 56px;
+    padding: 70px 20px 36px;
     align-items: flex-start;
   }
 
-  /* Hero */
-  .hero-panel-content { justify-content: flex-end; }
-  .hero-center { padding-bottom: 24px; }
-  .hero-eyebrow-logo { font-size: 2.2rem; }
-  .hero-headline { font-size: clamp(2.2rem, 8vw, 3rem); }
-  .hero-sub { font-size: 0.92rem; margin-bottom: 28px; }
-  .hero-ctas { flex-direction: column; align-items: center; gap: 12px; }
+  /* Hero — premium mobile layout */
+  .hero-panel-content { justify-content: space-between; flex-direction: column; min-height: 100svh; }
+  .hero-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 100px 24px 28px;
+    text-align: center;
+  }
+  .hero-eyebrow { gap: 10px; margin-bottom: 0; }
+  .hero-eyebrow-intro { font-size: 0.72rem; letter-spacing: 0.28em; }
+  .hero-eyebrow-logo { font-size: 2.4rem; }
+  .hero-eyebrow-baggage { font-size: 0.7rem; }
+  .hero-headline {
+    font-size: clamp(2.6rem, 10vw, 3.4rem);
+    margin-bottom: 0;
+    line-height: 1.05;
+  }
+  .hero-sub {
+    font-size: 0.88rem;
+    margin-bottom: 0;
+    color: rgba(255,255,255,0.48);
+    line-height: 1.75;
+  }
+  .hero-ctas { flex-direction: column; align-items: center; gap: 10px; }
   .btn-primary, .btn-ghost { width: 100%; max-width: 320px; text-align: center; }
 
   /* Ticker */
   .ticker-item { font-size: 0.75rem; padding: 0 28px; }
 
-  /* Baggage */
+  /* Baggage — tight vertical rhythm */
   .baggage-inner { padding: 0 4px; }
-  .baggage-numbers { flex-direction: column; gap: 20px; }
+  .baggage-numbers { flex-direction: column; gap: 8px; margin: 20px 0 0; }
   .bag-num { padding: 0; }
-  .bag-plus { font-size: 2rem; transform: rotate(90deg); }
-  .bag-num-value { font-size: clamp(3.5rem, 18vw, 5.5rem); }
+  .bag-plus { font-size: 1.6rem; transform: rotate(90deg); line-height: 1; }
+  .bag-num-value { font-size: clamp(3rem, 16vw, 5rem); }
   .title-light { font-size: clamp(1.8rem, 7vw, 2.8rem); }
-  .sub-light { font-size: 0.9rem; }
+  .sub-light { font-size: 0.9rem; margin-bottom: 0; }
 
   /* Carry-on */
   .carryon-content { grid-template-columns: 1fr; gap: 0; }
@@ -420,27 +545,33 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
     border-radius: 20px;
   }
   .aircraft-img-col { aspect-ratio: 16/9; }
-  .aircraft-text-col { padding: 32px 28px; border-left: none; border-top: 1px solid rgba(128,142,255,0.06); }
+  .aircraft-text-col { padding: 28px 24px 32px; border-left: none; border-top: 1px solid rgba(128,142,255,0.06); }
   .aircraft-title { font-size: clamp(1.4rem, 5vw, 2rem); }
 
   /* Meals */
-  .meals-content { grid-template-columns: 1fr; gap: 28px; }
+  .meals-content { grid-template-columns: 1fr; gap: 24px; }
   .meals-img-col { aspect-ratio: 16/10; }
   .meals-title { font-size: clamp(1.4rem, 5vw, 2rem); }
   .meals-body { font-size: 0.88rem; }
 
   /* Routes */
-  .routes-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 32px; }
-  .route-card { padding: 20px 14px; }
+  .routes-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 28px; }
+  .route-card { padding: 18px 12px; border-radius: 14px; }
   .route-cities { font-size: 0.88rem; flex-direction: column; gap: 4px; }
   .route-arrow { transform: rotate(90deg); display: inline-block; }
   .title-light { font-size: clamp(1.8rem, 6vw, 2.6rem); }
 
-  /* Grand visual */
+  /* Grand visual — tighten */
   .grand-text { font-size: clamp(1.8rem, 6vw, 2.8rem); }
   .grand-sub { font-size: 0.9rem; }
+  .grand-divider { margin: 20px auto; }
 
-  /* Reveal */
+  /* Disable parallax on mobile — prevent overflow whitespace */
+  .parallax-bg { inset: 0; transform: none !important; }
+  /* Hero bg — anchor to right to show face */
+  .hero-bg { inset: 0; background-position: 75% center; }
+
+  /* Reveal — stack vertically, tighter */
   .reveal-inner { padding: 40px 22px; border-radius: 24px; }
   .reveal-title { font-size: clamp(1.5rem, 6vw, 2.2rem); }
   .reveal-tagline { font-size: 1rem; }
@@ -452,7 +583,8 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   /* Final */
   .final-headline { font-size: clamp(1.8rem, 7vw, 3rem); }
   .final-sub { font-size: 1.05rem; margin-bottom: 14px; }
-  .mission-body { font-size: 0.86rem; margin-bottom: 36px; }
+  .mission-body { font-size: 0.86rem; margin-bottom: 28px; }
+  .mission-dista-logo { margin: 24px auto 24px; height: 64px; }
   .stats-grid { grid-template-columns: 1fr; gap: 12px; }
   .stat-card { padding: 28px 20px; }
   .stat-value { font-size: 2rem; }
@@ -463,6 +595,19 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   .progress-bar { width: 2px; }
   body { cursor: auto; }
   .cursor, .cursor-ring { display: none; }
+
+  /* Coupon */
+  .coupon-off { -webkit-text-stroke: 1.5px rgba(255,255,255,0.6); }
+  .coupon-code-inner { padding: 16px 24px; }
+  .coupon-code { font-size: 1.5rem; letter-spacing: 0.1em; }
+  .coupon-circle { width: 20px; height: 20px; }
+  .coupon-circle-left { left: -10px; }
+  .coupon-circle-right { right: -10px; }
+  .coupon-sub { font-size: 0.82rem; margin-bottom: 18px; }
+  .coupon-your { font-size: 0.7rem; }
+  #panel-8c .panel-content { padding: 70px 22px 40px; }
+  .coupon-code-wrap { margin-bottom: 20px; }
+  .btn-coupon { width: 100%; max-width: 320px; text-align: center; }
 }
 
 /* Extra small phones */
@@ -531,15 +676,19 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   .reveal-split {
     grid-template-columns: 1fr;
     height: auto;
-    min-height: 100vh;
+    min-height: unset;
   }
   .reveal-img-col {
-    height: 45vh;
+    height: 42vw;
+    min-height: 220px;
+    max-height: 280px;
   }
   .reveal-content-col {
-    padding: 40px 24px 48px;
+    padding: 32px 22px 44px;
   }
   .reveal-content-col::before { display: none; }
+  /* Grand visual needs a minimum to look good */
+  #panel-6 { min-height: 60vw; }
 }
 
 /* ── REVEAL RTBs ── */
@@ -578,24 +727,13 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 }
 
 @media (max-width: 768px) {
+  .reveal-rtbs { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .rtb-value { font-size: 1.1rem; }
+  .rtb-label { font-size: 0.68rem; }
+  .rtb-desc { font-size: 0.62rem; }
+}
+@media (max-width: 390px) {
   .reveal-rtbs { grid-template-columns: 1fr; gap: 8px; }
-}
-
-/* ── DISTA LOGO IN REVEAL & MISSION ── */
-.reveal-dista-logo {
-  height: 36px;
-  object-fit: contain;
-  object-position: left;
-  display: block;
-  margin-bottom: 20px;
-  opacity: 0.9;
-}
-.mission-dista-logo {
-  height: 90px;
-  object-fit: contain;
-  display: block;
-  margin: 40px auto 40px;
-  opacity: 1;
 }
 
 /* ── COUPON SECTION ── */
@@ -603,6 +741,11 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   text-align: center;
   max-width: 760px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
 }
 .coupon-eyebrow {
   display: inline-block;
@@ -615,71 +758,69 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   border: 1px solid rgba(255,255,255,0.2);
   padding: 5px 14px;
   border-radius: 100px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 .coupon-headline {
-  line-height: 0.9;
+  line-height: 0.88;
   letter-spacing: -0.04em;
-  margin-bottom: 18px;
+  margin-bottom: 8px;
 }
 .coupon-pct {
   display: inline-block;
-  font-size: clamp(5rem, 16vw, 11rem);
+  font-size: clamp(2.8rem, 7vw, 5.2rem);
   font-weight: 900;
   color: var(--white);
   line-height: 0.95;
-  text-shadow: 0 0 80px rgba(255,255,255,0.2);
+  text-shadow: 0 0 60px rgba(255,255,255,0.2);
 }
 .coupon-off {
   display: inline-block;
-  font-size: clamp(5rem, 16vw, 11rem);
+  font-size: clamp(2.8rem, 7vw, 5.2rem);
   font-weight: 900;
   color: transparent;
-  -webkit-text-stroke: 3px rgba(255,255,255,0.6);
+  -webkit-text-stroke: 2px rgba(255,255,255,0.6);
   line-height: 0.95;
   letter-spacing: -0.02em;
 }
 .coupon-your {
   display: block;
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-size: clamp(0.7rem, 1.4vw, 0.95rem);
   font-weight: 400;
-  color: rgba(255,255,255,0.6);
-  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-top: 10px;
+  margin-top: 4px;
+  margin-bottom: 10px;
 }
 .coupon-sub {
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   color: rgba(255,255,255,0.65);
   font-weight: 300;
-  line-height: 1.8;
-  max-width: 500px;
-  margin: 0 auto 36px;
+  line-height: 1.65;
+  max-width: 480px;
+  margin: 0 auto 16px;
 }
-
-/* Ticket-style coupon block */
 .coupon-code-wrap {
   display: inline-block;
   position: relative;
   background: var(--white);
   border-radius: 20px;
-  margin-bottom: 32px;
-  cursor: none;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+  margin-bottom: 16px;
+  cursor: pointer;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.22);
   transition: transform 0.3s var(--ease-expo), box-shadow 0.3s ease;
 }
 .coupon-code-wrap:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 32px 80px rgba(0,0,0,0.3);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.28);
 }
 .coupon-code-inner {
-  padding: 28px 52px;
+  padding: 14px 44px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
-/* Notches on left and right */
 .coupon-circle {
   position: absolute;
   top: 50%;
@@ -715,7 +856,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--brand-dark);
-  cursor: none;
+  cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
   white-space: nowrap;
   margin-top: 4px;
@@ -725,18 +866,17 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 .btn-coupon {
   display: block;
   width: fit-content;
-  margin: 20px auto 0;
+  margin: 0 auto;
   background: var(--white);
   color: var(--brand-dark);
   font-family: 'Poppins', sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
-  padding: 16px 40px;
+  padding: 13px 40px;
   border-radius: 100px;
   text-decoration: none;
   transition: transform 0.3s var(--ease-expo), box-shadow 0.3s ease;
   box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-  margin-bottom: 0;
 }
 .btn-coupon:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 16px 48px rgba(0,0,0,0.2); }
 .coupon-fine-print {
@@ -744,15 +884,24 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   color: rgba(255,255,255,0.35);
   font-weight: 300;
   font-style: italic;
+  margin-top: 8px;
 }
 
-@media (max-width: 768px) {
-  .coupon-off { -webkit-text-stroke: 2px rgba(255,255,255,0.6); }
-  .coupon-code-inner { padding: 22px 32px; }
-  .coupon-code { font-size: 1.6rem; letter-spacing: 0.12em; }
-  .coupon-circle { width: 22px; height: 22px; }
-  .coupon-circle-left { left: -11px; }
-  .coupon-circle-right { right: -11px; }
+/* ── DISTA LOGO IN REVEAL & MISSION ── */
+.reveal-dista-logo {
+  height: 36px;
+  object-fit: contain;
+  object-position: left;
+  display: block;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+.mission-dista-logo {
+  height: 90px;
+  object-fit: contain;
+  display: block;
+  margin: 40px auto 40px;
+  opacity: 1;
 }
 </style>
 </head>
@@ -938,8 +1087,9 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
     <div class="grand-overlay"></div>
     <div class="panel-content">
       <div class="grand-content">
-        <h2 class="grand-text anim from-bottom d1">
-          Because journeys to India are <span class="highlight">different.</span>
+        <h2 class="grand-text line-reveal">
+          <span class="line"><span class="line-inner">Because journeys to India</span></span>
+          <span class="line"><span class="line-inner">are <span class="highlight">different.</span></span></span>
         </h2>
         <div class="grand-divider anim scale-in d3"></div>
         <p class="grand-sub anim from-bottom d4">They involve long packing lists. Extra luggage. And a little bit of home packed in every suitcase.</p>
@@ -1007,8 +1157,6 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
           <span class="coupon-your"> your order.</span>
         </h2>
         <p class="coupon-sub anim from-bottom d3">DistaAir may not be real. But this discount very much is. Use code at checkout and get 10% off on Dista — 500,000+ authentic Indian products, shipped straight to your door.</p>
-
-        <!-- Code block -->
         <div class="coupon-code-wrap anim scale-in d4" onclick="copyCoupon()">
           <div class="coupon-code-inner">
             <div class="coupon-dashes">- - - - - - - - - - - - - - - -</div>
@@ -1022,13 +1170,13 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
           <div class="coupon-circle coupon-circle-right"></div>
         </div>
         <a href="https://www.distacart.com" class="btn-coupon anim from-bottom d5">Shop on Dista →</a>
-        <p class="coupon-fine-print anim from-bottom d6">Valid on any order. Offer expires 2nd April 2025, 11:59 PM PST.</p>
+        <p class="coupon-fine-print anim from-bottom d6">Valid on any order. Offer expires 2nd April 2026, 11:59 PM PST.</p>
       </div>
     </div>
   </section>
 
   <!-- 10. FINAL — clean sign-off -->
-  <section class="panel" id="panel-9" style="background: var(--deep);">
+  <section class="panel" id="panel-8" style="background: var(--deep);">
     <div class="panel-content">
       <div class="final-inner">
         <p class="eyebrow-light anim from-top d1" style="text-align:center;">Our Mission</p>
@@ -1062,9 +1210,12 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 
 <script>
   // ── Images ──
-  document.getElementById('heroBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/5.jpg?raw=true')";
+  const heroBg = document.getElementById('heroBg');
+  heroBg.style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/5.jpg?raw=true')";
+  heroBg.style.backgroundPosition = window.innerWidth <= 768 ? "80% center" : "right 30%";
   document.getElementById('carryonBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/4.png?raw=true')";
-  document.getElementById('grandBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/raw/main/colorful-vibrant-indian-landscape.jpg')";
+  document.getElementById('grandBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/ChatGPT%20Image%20Mar%2031,%202026,%2010_20_43%20AM.png?raw=true')";
+  document.getElementById('grandBg').style.backgroundPosition = "center 30%";
   document.getElementById('a350Img').src = "https://github.com/shubhangidixit-sd/DistaAir/blob/main/1.png?raw=true";
   document.getElementById('foodImg').src = "https://github.com/shubhangidixit-sd/DistaAir/blob/main/6.png?raw=true";
 
@@ -1107,7 +1258,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   })();
 
   // Hover states
-  document.querySelectorAll('a, button, .counter-dot, .route-card, .stat-card, input').forEach(el => {
+  document.querySelectorAll('a, button, .counter-dot, .route-card, .stat-card, input, .coupon-code-wrap').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
   });
@@ -1124,6 +1275,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   // ── Parallax on scroll ──
   const parallaxEls = document.querySelectorAll('.parallax-bg');
   sc.addEventListener('scroll', () => {
+    if (window.innerWidth <= 768) return; // disable on mobile
     parallaxEls.forEach(el => {
       const panel = el.closest('.panel');
       if (!panel) return;
@@ -1230,11 +1382,16 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
       const btn = document.getElementById('copyBtn');
       const label = document.getElementById('copyLabel');
       btn.classList.add('copied');
-      label.textContent = 'Copied!';
+      label.textContent = '✓ Copied!';
       setTimeout(() => {
         btn.classList.remove('copied');
-        label.textContent = 'Copy code';
+        label.textContent = '✂ Tap to copy';
       }, 2200);
+    }).catch(() => {
+      // Fallback for browsers that block clipboard without HTTPS
+      const label = document.getElementById('copyLabel');
+      label.textContent = 'DISTAAIR10';
+      setTimeout(() => { label.textContent = '✂ Tap to copy'; }, 2200);
     });
   }
 
