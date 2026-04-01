@@ -32,11 +32,6 @@ body {
   cursor: none;
 }
 
-@media (max-width: 768px) {
-  html { overflow: hidden; }
-  body { overflow: hidden; height: 100dvh; }
-}
-
 /* ── CUSTOM CURSOR ── */
 .cursor {
   position: fixed;
@@ -89,20 +84,15 @@ body.cursor-click .cursor-ring { width: 28px; height: 28px; }
 /* ── SCROLL CONTAINER — momentum-based, soft snap ── */
 .scroll-container {
   height: 100vh;
-  height: 100dvh;
-  overflow-y: auto;
+  overflow-y: scroll;
   scroll-snap-type: y proximity;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE */
 }
 .scroll-container::-webkit-scrollbar { display: none; }
 
 /* ── PANEL BASE ── */
 .panel {
-  height: 100vh;
-  height: 100dvh;
-  width: 100vw;
+  height: 100vh; width: 100vw;
   scroll-snap-align: start;
   position: relative;
   overflow: hidden;
@@ -230,7 +220,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 /* ── 1. HERO ── */
 .hero-bg {
   position: absolute; inset: -15%;
-  background-size: cover; background-position: right 30%;
+  background-size: cover; background-position: center 30%;
   filter: brightness(0.42);
   will-change: transform;
 }
@@ -320,9 +310,9 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 
 /* ── 7. GRAND VISUAL ── */
 .grand-bg { position: absolute; inset: -15%; background-size: cover; background-position: center; will-change: transform; }
-.grand-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,13,31,0.88) 0%, rgba(10,13,31,0.45) 55%, rgba(10,13,31,0.65) 100%); }
+.grand-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,13,31,0.82) 0%, rgba(10,13,31,0.35) 60%, rgba(10,13,31,0.6) 100%); }
 .grand-content { text-align: center; max-width: 740px; }
-.grand-text { font-size: clamp(2.2rem, 4.5vw, 3.8rem); font-weight: 800; line-height: 1.18; letter-spacing: -0.025em; color: var(--white); }
+.grand-text { font-size: clamp(1.6rem, 3.5vw, 3.2rem); font-weight: 800; line-height: 1.25; letter-spacing: -0.02em; color: var(--white); max-width: 700px; }
 .grand-text .highlight { color: var(--brand-light); }
 .grand-divider { width: 44px; height: 2px; background: linear-gradient(to right, var(--brand), var(--brand-light)); margin: 30px auto; border-radius: 2px; opacity: 0.8; }
 .grand-sub { font-size: 1rem; color: rgba(255,255,255,0.42); font-weight: 300; line-height: 1.85; }
@@ -378,63 +368,44 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   .scroll-container {
     scroll-snap-type: none;
     overflow-y: auto;
-    height: 100dvh;
+    height: 100vh;
   }
   .panel {
     height: auto;
-    min-height: unset;
+    min-height: 100vh;
     scroll-snap-align: none;
     padding-top: 0;
   }
-  /* Only hero stays full-screen */
-  #panel-0 { min-height: 100svh; }
+
+  /* Nav */
   nav { padding: 14px 20px; }
 
   /* Panel content spacing */
   .panel-content {
-    padding: 70px 20px 36px;
+    padding: 100px 22px 56px;
     align-items: flex-start;
   }
 
-  /* Hero — premium mobile layout */
-  .hero-panel-content { justify-content: space-between; flex-direction: column; min-height: 100svh; }
-  .hero-center {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 100px 24px 28px;
-    text-align: center;
-  }
-  .hero-eyebrow { gap: 10px; margin-bottom: 0; }
-  .hero-eyebrow-intro { font-size: 0.72rem; letter-spacing: 0.28em; }
-  .hero-eyebrow-logo { font-size: 2.4rem; }
-  .hero-eyebrow-baggage { font-size: 0.7rem; }
-  .hero-headline {
-    font-size: clamp(2.6rem, 10vw, 3.4rem);
-    margin-bottom: 0;
-    line-height: 1.05;
-  }
-  .hero-sub {
-    font-size: 0.88rem;
-    margin-bottom: 0;
-    color: rgba(255,255,255,0.48);
-    line-height: 1.75;
-  }
-  .hero-ctas { flex-direction: column; align-items: center; gap: 10px; }
+  /* Hero */
+  .hero-panel-content { justify-content: flex-end; }
+  .hero-center { padding-bottom: 24px; }
+  .hero-eyebrow-logo { font-size: 2.2rem; }
+  .hero-headline { font-size: clamp(2.2rem, 8vw, 3rem); }
+  .hero-sub { font-size: 0.92rem; margin-bottom: 28px; }
+  .hero-ctas { flex-direction: column; align-items: center; gap: 12px; }
   .btn-primary, .btn-ghost { width: 100%; max-width: 320px; text-align: center; }
 
   /* Ticker */
   .ticker-item { font-size: 0.75rem; padding: 0 28px; }
 
-  /* Baggage — tight vertical rhythm */
+  /* Baggage */
   .baggage-inner { padding: 0 4px; }
-  .baggage-numbers { flex-direction: column; gap: 8px; margin: 20px 0 0; }
+  .baggage-numbers { flex-direction: column; gap: 20px; }
   .bag-num { padding: 0; }
-  .bag-plus { font-size: 1.6rem; transform: rotate(90deg); line-height: 1; }
-  .bag-num-value { font-size: clamp(3rem, 16vw, 5rem); }
+  .bag-plus { font-size: 2rem; transform: rotate(90deg); }
+  .bag-num-value { font-size: clamp(3.5rem, 18vw, 5.5rem); }
   .title-light { font-size: clamp(1.8rem, 7vw, 2.8rem); }
-  .sub-light { font-size: 0.9rem; margin-bottom: 0; }
+  .sub-light { font-size: 0.9rem; }
 
   /* Carry-on */
   .carryon-content { grid-template-columns: 1fr; gap: 0; }
@@ -449,33 +420,27 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
     border-radius: 20px;
   }
   .aircraft-img-col { aspect-ratio: 16/9; }
-  .aircraft-text-col { padding: 28px 24px 32px; border-left: none; border-top: 1px solid rgba(128,142,255,0.06); }
+  .aircraft-text-col { padding: 32px 28px; border-left: none; border-top: 1px solid rgba(128,142,255,0.06); }
   .aircraft-title { font-size: clamp(1.4rem, 5vw, 2rem); }
 
   /* Meals */
-  .meals-content { grid-template-columns: 1fr; gap: 24px; }
+  .meals-content { grid-template-columns: 1fr; gap: 28px; }
   .meals-img-col { aspect-ratio: 16/10; }
   .meals-title { font-size: clamp(1.4rem, 5vw, 2rem); }
   .meals-body { font-size: 0.88rem; }
 
   /* Routes */
-  .routes-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 28px; }
-  .route-card { padding: 18px 12px; border-radius: 14px; }
+  .routes-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 32px; }
+  .route-card { padding: 20px 14px; }
   .route-cities { font-size: 0.88rem; flex-direction: column; gap: 4px; }
   .route-arrow { transform: rotate(90deg); display: inline-block; }
   .title-light { font-size: clamp(1.8rem, 6vw, 2.6rem); }
 
-  /* Grand visual — tighten */
+  /* Grand visual */
   .grand-text { font-size: clamp(1.8rem, 6vw, 2.8rem); }
   .grand-sub { font-size: 0.9rem; }
-  .grand-divider { margin: 20px auto; }
 
-  /* Disable parallax on mobile — prevent overflow whitespace */
-  .parallax-bg { inset: 0; transform: none !important; }
-  /* Hero bg — anchor to right to show face */
-  .hero-bg { inset: 0; background-position: 75% center; }
-
-  /* Reveal — stack vertically, tighter */
+  /* Reveal */
   .reveal-inner { padding: 40px 22px; border-radius: 24px; }
   .reveal-title { font-size: clamp(1.5rem, 6vw, 2.2rem); }
   .reveal-tagline { font-size: 1rem; }
@@ -487,8 +452,7 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   /* Final */
   .final-headline { font-size: clamp(1.8rem, 7vw, 3rem); }
   .final-sub { font-size: 1.05rem; margin-bottom: 14px; }
-  .mission-body { font-size: 0.86rem; margin-bottom: 28px; }
-  .mission-dista-logo { margin: 24px auto 24px; height: 64px; }
+  .mission-body { font-size: 0.86rem; margin-bottom: 36px; }
   .stats-grid { grid-template-columns: 1fr; gap: 12px; }
   .stat-card { padding: 28px 20px; }
   .stat-value { font-size: 2rem; }
@@ -567,19 +531,15 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   .reveal-split {
     grid-template-columns: 1fr;
     height: auto;
-    min-height: unset;
+    min-height: 100vh;
   }
   .reveal-img-col {
-    height: 42vw;
-    min-height: 220px;
-    max-height: 280px;
+    height: 45vh;
   }
   .reveal-content-col {
-    padding: 32px 22px 44px;
+    padding: 40px 24px 48px;
   }
   .reveal-content-col::before { display: none; }
-  /* Grand visual needs a minimum to look good */
-  #panel-6 { min-height: 60vw; }
 }
 
 /* ── REVEAL RTBs ── */
@@ -618,12 +578,6 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 }
 
 @media (max-width: 768px) {
-  .reveal-rtbs { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .rtb-value { font-size: 1.1rem; }
-  .rtb-label { font-size: 0.68rem; }
-  .rtb-desc { font-size: 0.62rem; }
-}
-@media (max-width: 390px) {
   .reveal-rtbs { grid-template-columns: 1fr; gap: 8px; }
 }
 
@@ -642,6 +596,163 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   display: block;
   margin: 40px auto 40px;
   opacity: 1;
+}
+
+/* ── COUPON SECTION ── */
+.coupon-inner {
+  text-align: center;
+  max-width: 760px;
+  width: 100%;
+}
+.coupon-eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+}
+.coupon-headline {
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 18px;
+}
+.coupon-pct {
+  display: inline-block;
+  font-size: clamp(5rem, 16vw, 11rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 0.95;
+  text-shadow: 0 0 80px rgba(255,255,255,0.2);
+}
+.coupon-off {
+  display: inline-block;
+  font-size: clamp(5rem, 16vw, 11rem);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 3px rgba(255,255,255,0.6);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.coupon-your {
+  display: block;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+.coupon-sub {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.65);
+  font-weight: 300;
+  line-height: 1.8;
+  max-width: 500px;
+  margin: 0 auto 36px;
+}
+
+/* Ticket-style coupon block */
+.coupon-code-wrap {
+  display: inline-block;
+  position: relative;
+  background: var(--white);
+  border-radius: 20px;
+  margin-bottom: 32px;
+  cursor: none;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+  transition: transform 0.3s var(--ease-expo), box-shadow 0.3s ease;
+}
+.coupon-code-wrap:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.3);
+}
+.coupon-code-inner {
+  padding: 28px 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+/* Notches on left and right */
+.coupon-circle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px; height: 28px;
+  background: var(--brand);
+  border-radius: 50%;
+}
+.coupon-circle-left { left: -14px; }
+.coupon-circle-right { right: -14px; }
+.coupon-dashes {
+  font-size: 0.65rem;
+  color: rgba(128,142,255,0.3);
+  letter-spacing: 0.05em;
+  font-weight: 400;
+  width: 100%;
+  overflow: hidden;
+}
+.coupon-code {
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: var(--brand-dark);
+  user-select: all;
+  line-height: 1;
+}
+.coupon-copy-btn {
+  background: var(--brand-xlight);
+  border: 1px solid rgba(128,142,255,0.2);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--brand-dark);
+  cursor: none;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+  margin-top: 4px;
+}
+.coupon-copy-btn:hover { background: var(--brand); color: var(--white); transform: scale(1.04); }
+.coupon-copy-btn.copied { background: #e6f9ed; color: #2e9e44; border-color: #2e9e44; }
+.btn-coupon {
+  display: block;
+  width: fit-content;
+  margin: 20px auto 0;
+  background: var(--white);
+  color: var(--brand-dark);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 16px 40px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: transform 0.3s var(--ease-expo), box-shadow 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  margin-bottom: 0;
+}
+.btn-coupon:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 16px 48px rgba(0,0,0,0.2); }
+.coupon-fine-print {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.35);
+  font-weight: 300;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .coupon-off { -webkit-text-stroke: 2px rgba(255,255,255,0.6); }
+  .coupon-code-inner { padding: 22px 32px; }
+  .coupon-code { font-size: 1.6rem; letter-spacing: 0.12em; }
+  .coupon-circle { width: 22px; height: 22px; }
+  .coupon-circle-left { left: -11px; }
+  .coupon-circle-right { right: -11px; }
 }
 </style>
 </head>
@@ -827,9 +938,8 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
     <div class="grand-overlay"></div>
     <div class="panel-content">
       <div class="grand-content">
-        <h2 class="grand-text line-reveal">
-          <span class="line"><span class="line-inner">Because journeys to India</span></span>
-          <span class="line"><span class="line-inner">are <span class="highlight">different.</span></span></span>
+        <h2 class="grand-text anim from-bottom d1">
+          Because journeys to India are <span class="highlight">different.</span>
         </h2>
         <div class="grand-divider anim scale-in d3"></div>
         <p class="grand-sub anim from-bottom d4">They involve long packing lists. Extra luggage. And a little bit of home packed in every suitcase.</p>
@@ -886,8 +996,39 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
     </div>
   </section>
 
-  <!-- 9. FINAL — clean sign-off -->
-  <section class="panel" id="panel-8" style="background: var(--deep);">
+  <!-- 9. COUPON -->
+  <section class="panel" id="panel-8c" style="background: var(--brand);">
+    <div class="panel-content">
+      <div class="coupon-inner">
+        <span class="coupon-eyebrow anim from-top d1">A little something for playing along.</span>
+        <h2 class="coupon-headline anim from-bottom d2">
+          <span class="coupon-pct">10%</span><br>
+          <span class="coupon-off">OFF</span>
+          <span class="coupon-your"> your order.</span>
+        </h2>
+        <p class="coupon-sub anim from-bottom d3">DistaAir may not be real. But this discount very much is. Use code at checkout and get 10% off on Dista — 500,000+ authentic Indian products, shipped straight to your door.</p>
+
+        <!-- Code block -->
+        <div class="coupon-code-wrap anim scale-in d4" onclick="copyCoupon()">
+          <div class="coupon-code-inner">
+            <div class="coupon-dashes">- - - - - - - - - - - - - - - -</div>
+            <div class="coupon-code" id="couponCode">DISTAAIR10</div>
+            <div class="coupon-dashes">- - - - - - - - - - - - - - - -</div>
+            <button class="coupon-copy-btn" id="copyBtn">
+              <span id="copyLabel">✂ Tap to copy</span>
+            </button>
+          </div>
+          <div class="coupon-circle coupon-circle-left"></div>
+          <div class="coupon-circle coupon-circle-right"></div>
+        </div>
+        <a href="https://www.distacart.com" class="btn-coupon anim from-bottom d5">Shop on Dista →</a>
+        <p class="coupon-fine-print anim from-bottom d6">Valid on any order. Offer expires 2nd April 2025, 11:59 PM PST.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. FINAL — clean sign-off -->
+  <section class="panel" id="panel-9" style="background: var(--deep);">
     <div class="panel-content">
       <div class="final-inner">
         <p class="eyebrow-light anim from-top d1" style="text-align:center;">Our Mission</p>
@@ -921,12 +1062,9 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
 
 <script>
   // ── Images ──
-  const heroBg = document.getElementById('heroBg');
-  heroBg.style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/5.jpg?raw=true')";
-  heroBg.style.backgroundPosition = window.innerWidth <= 768 ? "80% center" : "right 30%";
+  document.getElementById('heroBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/5.jpg?raw=true')";
   document.getElementById('carryonBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/4.png?raw=true')";
-  document.getElementById('grandBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/blob/main/ChatGPT%20Image%20Mar%2031,%202026,%2010_20_43%20AM.png?raw=true')";
-  document.getElementById('grandBg').style.backgroundPosition = "center 30%";
+  document.getElementById('grandBg').style.backgroundImage = "url('https://github.com/shubhangidixit-sd/DistaAir/raw/main/colorful-vibrant-indian-landscape.jpg')";
   document.getElementById('a350Img').src = "https://github.com/shubhangidixit-sd/DistaAir/blob/main/1.png?raw=true";
   document.getElementById('foodImg').src = "https://github.com/shubhangidixit-sd/DistaAir/blob/main/6.png?raw=true";
 
@@ -986,7 +1124,6 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
   // ── Parallax on scroll ──
   const parallaxEls = document.querySelectorAll('.parallax-bg');
   sc.addEventListener('scroll', () => {
-    if (window.innerWidth <= 768) return; // disable on mobile
     parallaxEls.forEach(el => {
       const panel = el.closest('.panel');
       if (!panel) return;
@@ -1087,6 +1224,19 @@ nav.scrolled { background: rgba(10,13,31,0.75); padding: 14px 52px; }
     document.getElementById('modal').classList.add('active');
   }
   function closeModal(e) { if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('active'); }
+
+  function copyCoupon() {
+    navigator.clipboard.writeText('DISTAAIR10').then(() => {
+      const btn = document.getElementById('copyBtn');
+      const label = document.getElementById('copyLabel');
+      btn.classList.add('copied');
+      label.textContent = 'Copied!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        label.textContent = 'Copy code';
+      }, 2200);
+    });
+  }
 
   panels[0].classList.add('in-view');
 </script>
